@@ -17,7 +17,7 @@ The BikeNav_C3 turns your smartphone into a discreet navigation system. Instead 
 </table>
 
 ## 📲 The Android Bridge App
-The heart of the system is the pairing with the **Android Bridge App** ![TTS2BluetoothSerial](../TTS2BluetoothSerial). This acts as an intelligent link between the smartphone and the HUD:
+The heart of the system is the pairing with the **Android Bridge App** ![TTS2BluetoothSerial](../../TTS2BluetoothSerial). This acts as an intelligent link between the smartphone and the HUD:
 * **TTS Interface**: The Bridge App uses the Android system's text-to-speech (TTS) and converts it into visual commands for the display in real-time.
 * **Tested Compatibility**: The system is independent of the map app used. It has been successfully tested with:
     * **Organic Maps** (and its forks)
