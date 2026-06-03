@@ -1,0 +1,66 @@
+# 🛰️ Navi-Pro-V10 | ESP32-2424S012
+
+Professionelles Bluetooth-Navigationsdisplay auf Basis des ESP32-C3. Optimiert für die Zusammenarbeit mit **Organic Maps** via **Nordic UART Service (NUS)**.
+
+---
+
+## 🚀 Kern-Features
+
+* **Nordic UART Protokoll:** Nutzt den Industriestandard für zuverlässige Datenübertragung (Service UUID: `6E400001-...`).
+* **Intelligenter Parser:** Trennt automatisch zwischen Fahrdaten (`SPD:`) und Navigationsanweisungen (`NAV:`).
+* **Dynamische Distanz-Logik:** * Berechnet die Restdistanz in Echtzeit basierend auf der empfangenen Geschwindigkeit.
+    * Erkennt automatisch Einheiten (m/km) aus dem Text der App.
+* **Tag- & Nachtansicht:** Umschaltbare Farbschemata zur Vermeidung von Blendung im Dunkeln (Long-Press auf Display).
+* **Flicker-Free UI:** Double-Buffering via `TFT_eSprite` für flüssige Animationen.
+* **Power Management:** Automatischer Standby bei Inaktivität; Wake-up bei Berührung oder neuer Nachricht.
+
+---
+
+## 🏗️ System-Architektur
+
+1. **`hal.h`**: Hardware-Pins und Display-Treiber-Konfiguration.
+2. **`config.h`**: BLE-UUIDs, Farbschemata, Schwellenwerte und Timeouts.
+3. **`main.cpp`**: BLE-Stack, Daten-Parser und Grafik-Engine.
+
+---
+
+## 📶 BLE Schnittstelle (Steckbrief)
+
+Das Gerät simuliert einen Nordic UART Port für maximale Kompatibilität mit Navigations-Apps.
+
+* **Service UUID:** `6E400001-B5A3-F393-E0A9-E50E24DCCA9E`
+* **RX Characteristic:** `6E400002-B5A3-F393-E0A9-E50E24DCCA9E`
+* **MTU:** Unterstützt bis zu 512 Bytes für lange Textansagen.
+
+### Protokoll-Beispiele:
+* `SPD:45` -> Setzt die aktuelle Geschwindigkeit auf 45 km/h für die Distanzberechnung.
+* `NAV:In 300m rechts abbiegen` -> Zeigt das Icon "Rechts", Distanz 300m und füllt den Progress-Ring.
+* `NAV:Ziel erreicht` -> Schaltet auf Zielflaggen-Modus um.
+
+---
+
+## 🛠️ Hardware-Spezifikationen
+
+| Komponente | Details |
+| :--- | :--- |
+| **Board** | ESP32-2424S012 (ESP32-C3) |
+| **Display** | 1.28" TFT Rund (240x240 Pixel, GC9A01) |
+| **Touch** | CST816S Kapazitiv |
+| **Speicher** | NVS (Flash) zur Sicherung von Rotation & Farbmodus |
+
+---
+
+## 💻 Bedienung am Gerät
+
+* **Single Tap:** Weckt das Display aus dem Sleep-Modus.
+* **Double Tap:** Rotiert die Anzeige um 90° (Einstellung wird dauerhaft gespeichert).
+* **Long Press (2s):** Wechselt zwischen Tag-Modus (hell/orange) und Nacht-Modus (gedimmt/bernstein).
+* **Status-LED:** 🔴 Rot (Suche/Advertising) | 🔵 Blau (Verbunden).
+
+---
+
+## 🏗️ Build-Anweisungen
+
+1. Die Dateien `hal.h` und `config.h` im `include/` Ordner ablegen.
+2. Die `main.cpp` im `src/` Ordner ablegen.
+3. In VS Code / PlatformIO auf **Build** klicken.
