@@ -25,7 +25,7 @@ Das Herzstück des Systems ist die Kopplung mit der **Android Bridge App**. Dies
 * **Touch**: Kapazitiver CST816S Controller.
 
 ## 🚀 Schnellstart
-1. **Firmware**: Mit PlatformIO auf den ESP32-C3 flashen.
+1. **Firmware**: Mit PlatformIO auf den ESP32-C3 flashen oder den [Web-Uploader](docs/uploader/index.html) nutzen.
 2. **Koppeln**: In der Android Bridge App nach "BikeNav_C3" suchen.
 3. **Start**: Sobald die Navigation läuft, übernimmt das HUD automatisch.
 
