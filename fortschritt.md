@@ -1,0 +1,33 @@
+# Fortschritt
+
+- [x] Projekt-Setup und Basis-Struktur
+- [x] Rendering-Logik (Nav-Screen, Start-Screen)
+- [x] Power-Save Logik (Standby)
+- [x] Fix: Gesture-Debouncing für Touch-Eingabe (verhindert Doppel-Trigger)
+- [x] Fix: Touch-Logik (Tippen weckt nur auf, löst keine Aktionen aus wenn Display an)
+- [x] Fix: NAV-Präfix Parsing im BLE-Handler (bereinigt eingehende Nav-Daten)
+- [x] Fix: Rerouting-Erkennung in logic.cpp (erkennt "Route neu berechnet")
+- [x] Fix: Bullet-Point Parsing in Nav-Anweisungen (bereinigt OSMAND-Daten)
+- [x] Fix: Parser-Erweiterung für "Ausfahrt" in logic.cpp
+- [x] Fix: Ignoriere "0 m" Updates im BLE-Handler (verhindert Überschreiben)
+- [x] Implementierung PFX-Algorithmus zur Richtungs- und Punkt-Detektion
+- [x] Fix: Ausfahrtsnummer im Kreisverkehr-Icon korrekt parsen
+- [x] Fix: Ausfahrtsnummern im Kreisverkehr bis 9 unterstützen
+- [x] Fix: Kreisverkehr-Radius um 5px vergrößert
+- [x] Fix: Rechts-Pfeile um 20px nach links verschoben
+- [x] Fix: U-Turn-Icon-Körper um 10px nach unten verschoben
+- [x] Fix: Anzeige der Ausfahrtsnummer bei Kreisverkehr erzwingen
+- [x] Implementierung Light Sleep (esp_light_sleep_start) für Energieeffizienz
+- [x] Fix: Wakeup-Logik für ESP32-C3/S3 Kompatibilität (GPIO Wakeup statt ext0)
+- [x] Fix: GPIO Wakeup Interrupt Typ auf GPIO_INTR_LOW_LEVEL korrigiert
+- [x] Fix: Entfernung von esp_sleep_enable_bt_wakeup() für C3/S3 Kompatibilität
+- [x] Anpassung: Start-Begrüßung auf "casual" geändert
+- [x] Refactoring des BLE-Parsers (3-Phasen-Logik: Segmentierung, Nav-Extraktion, Meta-Extraktion)
+- [x] Anpassung Startscreen: MAC-Position um 10px nach oben verschoben
+- [x] Automatisierung: Git-Commit-Hash und Version in platformio.ini definiert
+- [x] Anpassung: src/graphics.cpp nutzt Build-Flags statt hartcodiertem String
+- [x] Fix: Build-Fehler behoben (Fallback-Werte für Build-Flags in src/graphics.cpp hinzugefügt)
+- [x] Debugging: Build-Flags in platformio.ini korrigiert und Clean-Build erzwungen
+- [x] Implementierung: Git-Hash via Python-Skript (scripts/get_git_revision.py)
+- [x] Fix: Python-Skript-Integration in platformio.ini aktiviert
+- [x] Fix: Bereinigung und Korrektur von scripts/get_git_revision.py
