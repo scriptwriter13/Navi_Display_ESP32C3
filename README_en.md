@@ -8,9 +8,9 @@ The BikeNav_C3 turns your smartphone into a discreet navigation system. Instead 
 * **Minimalist Cockpit**: No bulky phone on the handlebars, just an elegant, round display.
 * **Weather Independence**: The display is easy to read even in direct sunlight.
 
-![Start Screen](assets/start_screen.png)
-![Navigation View](assets/nav_screen.png)
-![Hardware Setup](assets/hardware_setup.png)
+![Start Screen](assets/screen_disconn_appwaiting.jpeg)
+![Navigation View](assets/screen_turn_right.jpeg)
+![Navigation View 2](assets/screen_turn_halve_right.jpeg)
 
 ## 📲 The Android Bridge App
 The heart of the system is the pairing with the **Android Bridge App**. This acts as an intelligent link between the smartphone and the HUD:
