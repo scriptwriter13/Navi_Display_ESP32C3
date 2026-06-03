@@ -9,9 +9,13 @@ Das BikeNav_C3 verwandelt dein Smartphone in ein diskretes Navigationssystem. An
 * **Wetterunabhängigkeit**: Das Display ist auch bei direkter Sonneneinstrahlung gut ablesbar.
 
 
-![Startbildschirn](assets/screen_disconn_appwaiting.jpeg)
-![Navigationsansicht](assets/screen_turn_right.jpeg)
-![Navigationsansicht2](assets/screen_turn_halve_right.jpeg)
+<table>
+  <tr>
+    <td><img src="assets/screen_disconn_appwaiting.jpeg" width="200" alt="Startbildschirm"></td>
+    <td><img src="assets/screen_turn_right.jpeg" width="200" alt="Navigationsansicht"></td>
+    <td><img src="assets/screen_turn_halve_right.jpeg" width="200" alt="Navigationsansicht 2"></td>
+  </tr>
+</table>
 
 ## 📲 Die Android Bridge App
 Das Herzstück des Systems ist die Kopplung mit der **Android Bridge App**. Diese fungiert als intelligentes Bindeglied zwischen dem Smartphone und dem HUD:
@@ -34,6 +38,7 @@ Das Herzstück des Systems ist die Kopplung mit der **Android Bridge App**. Dies
 * **Controller**: ESP32-C3 (RISC-V).
 * **Display**: 1.28 Zoll Round-LCD, 240x240 Pixel, IPS.
 * **Touch**: Kapazitiver CST816S Controller.
+* **Kompatibilität**: Der Code ist für das ESP32-2424S012 Display (häufig auf AliExpress zu finden) oder ähnliche GC9A01-basierte Displays anpassbar.
 
 ## 🚀 Schnellstart & Installation
 
@@ -52,6 +57,8 @@ Das Herzstück des Systems ist die Kopplung mit der **Android Bridge App**. Dies
 3. Sobald verbunden, zeigt das Display den Navigations-Screen.
 
 ## ⚙️ Technische Funktionsweise
+
+*Letzte Aktualisierung: 2023-10-27*
 
 Das System folgt einem ereignisgesteuerten Datenfluss:
 
