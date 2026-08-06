@@ -1,13 +1,36 @@
+/*                                                                                                                                        
+ * Copyright (C) 2026 by scriptwriter13                                                                                       
+ *                                                                                                                                        
+ * Dieses Programm ist freie Software: Sie können es unter den Bedingungen der                                                            
+ * GNU General Public License, wie von der Free Software Foundation veröffentlicht,                                                       
+ * entweder Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren                                                                  
+ * Version, weiterverbreiten und/oder modifizieren.                                                                                       
+ *                                                                                                                                        
+ * Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber                                                                 
+ * OHNE JEDE GEWÄHRLEISTUNG, sogar ohne die implizite Gewährleistung der                                                                  
+ * MARKTGÄNGIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die                                                                     
+ * GNU General Public License für weitere Details.                                                                                        
+ *                                                                                                                                        
+ * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem                                                              
+ * Programm erhalten haben. Wenn nicht, siehe <https://www.gnu.org/licenses/>.                                                            
+ */
 // FILE: src/graphics.cpp
 // STATUS: FULL ABSOLUTE CONTROL (MASTER ANKER)
-// DATE: 2026-03-10
-// CHANGE: Robust String concatenation for bracket values to prevent "364" merging.
+// DATE: 2026-03-29
+// CHANGE: Orange Flash Mode für OTA-Status implementiert.
+// CHANGE: (Vorherige Änderungen siehe Historie)
 // CHANGE: Ausfahrtsnummer im Kreisverkehr-Icon (type 4) hinzugefügt.
 // CHANGE: Kreisverkehr-Radius um weitere 5px vergrößert.
 // CHANGE: Pfeile um 5px nach links und 5px nach unten verschoben.
 // CHANGE: U-Turn Icon: Körper um 10px nach unten verschoben.
 // CHANGE: Startscreen: MAC-Position um 10px nach oben verschoben.
 // CHANGE: Startscreen: Versions-Info hinzugefügt (automatisiert via Build-Flags).
+// CHANGE: Kreisverkehr-Logik finalisiert.
+// CHANGE: Dreieck-Geometrie angepasst (45° links, 1/3 Länge, 3x Breite).
+// CHANGE: Kreisverkehr-Pfeil auf Raute-Geometrie umgestellt.
+// CHANGE: Kreisverkehr-Pfeil auf einzelnes Dreieck (doppelte Höhe) reduziert.
+// CHANGE: Kreisverkehr-Linienstärke um 3px reduziert.
+// CHANGE: Ausfahrtsnummer (mod) in Kreisverkehr-Mitte hinzugefügt.
 
 #include "graphics.h"
 #include "layout_config.h"
@@ -26,6 +49,7 @@
 // Extern deklariert, um auf die Punkt-Nummer aus der Logik/Main zuzugreifen
 extern String pointNumber;
 extern String metaDist, metaTime;
+extern bool isFlashing;
 
 // --- Hilfsfunktion: UTF-8 zu GFX-Font Mapping ---
 String utf8ToGfx(String s) {
@@ -83,7 +107,8 @@ void drawArrowGeometry(Arduino_Canvas *canvas, int cx, int cy, float angleDeg, i
 void drawSingleNavIcon(Arduino_Canvas *canvas, int type, int mod, uint16_t color, int blX, int blY, int w, int h, int thicknessExtra) {
     float scale = (float)w / 60.0f; 
     int cx = blX + (w / 2), cy = blY - (h / 2); 
-    int thick = max(6, (int)(11 * scale)) + thicknessExtra; 
+    // Linienstärke um 3px reduziert
+    int thick = max(3, (int)(11 * scale) + thicknessExtra - 3); 
     int headLen = (int)(20 * scale);
 
     if (type == 1 || type == 2 || type == 3 || type == 6) {
@@ -94,23 +119,53 @@ void drawSingleNavIcon(Arduino_Canvas *canvas, int type, int mod, uint16_t color
         int xShift = (type == 1) ? (w/6) : ((type == 2 || type == 6) ? -(w/6) - 20 : 0);
         drawArrowGeometry(canvas, cx + xShift - 5, cy + (h/4) + 5, angle, thick, headLen, h, color);
     } 
-    else if (type == 4) { 
-        int r_size = (w/2) - 2 + 10; // Radius um weitere 5px vergrößert
-        for(int i=0; i<thick; i++) canvas->drawArc(cx, cy, r_size-i, r_size-i, 40, 320, color);
-        canvas->fillTriangle(cx+(r_size*0.7), cy-(r_size*0.5), cx+(r_size*1.3), cy-(r_size*0.5), cx+(r_size*1.0), cy-(r_size*1.0), color);
+    else if (type == 4) { // Kreisverkehr: 60° bis 330° Bogen mit Dreieck
+        int r_size = (w / 2) + 3; 
         
-        // Ausfahrtsnummer zeichnen (nur im Haupt-Icon, nicht im Schatten)
-        if (mod > 0 && color != COL_BG_BLACK) {
+        // Bogen zeichnen (60° bis 330°)
+        for(int j=0; j<thick; j++) {
+            canvas->drawArc(cx, cy, r_size-j, r_size-j, 60, 330, color);
+        }
+
+        // 1. Ankerpunkt am Ende des Bogens (330°)
+        float baseAngle = 330.0f;
+        float radBase = baseAngle * 0.01745329f;
+        int bx_raw = cx + (int)(r_size * cos(radBase));
+        int by_raw = cy + (int)(r_size * sin(radBase));
+
+        // 2. Richtung der Linie (Tangente bei 330° ist 60°)
+        float tangentAngle = 60.0f;
+        float radTan = tangentAngle * 0.01745329f;
+
+        // Versatz um halbe Dicke in Tangentenrichtung
+        int bx = bx_raw + (int)((thick / 2) * cos(radTan));
+        int by = by_raw + (int)((thick / 2) * sin(radTan));
+
+        // 3. Spitze des Dreiecks (16px Abstand für mehr Höhe)
+        int tx = bx + (int)(16 * cos(radTan));
+        int ty = by + (int)(16 * sin(radTan));
+
+        // 4. Breite (senkrecht zur Tangente: 60° + 90° = 150°)
+        float perpAngle = 150.0f * 0.01745329f;
+        int w_half = thick; // Breite des Dreiecks
+        int dx = (int)(w_half * cos(perpAngle));
+        int dy = (int)(w_half * sin(perpAngle));
+
+        // 5. Ein Dreieck zeichnen
+        canvas->fillTriangle(bx - dx, by - dy, bx + dx, by + dy, tx, ty, color);
+
+        // 6. Ausfahrtsnummer in der Mitte
+        if (mod > 0) {
             canvas->setFont(&FreeSans12pt8b);
             canvas->setTextSize(1);
             canvas->setTextColor(color);
             String modStr = String(mod);
-            int16_t tx, ty; uint16_t tw, th;
-            canvas->getTextBounds(modStr.c_str(), 0, 0, &tx, &ty, &tw, &th);
+            int16_t tx_txt, ty_txt; uint16_t tw, th;
+            canvas->getTextBounds(modStr.c_str(), 0, 0, &tx_txt, &ty_txt, &tw, &th);
             canvas->setCursor(cx - (tw / 2), cy + (th / 2));
             canvas->print(modStr);
         }
-    } 
+    }
     else if (type == 5) { 
         int r_base = cy - (h/4) + 10; // Körper um 10px nach unten verschoben
         for(int i=0; i<thick; i++) canvas->drawArc(cx, r_base, (w/2)-i, (w/2)-i, 180, 360, color);
@@ -135,7 +190,14 @@ void drawNavIcon(Arduino_Canvas *canvas, int type, int mod, uint16_t color, int 
 // --- Startscreen ---
 void renderStartScreen(Arduino_Canvas *canvas, bool isConnected, String macAddr) {
     canvas->fillScreen(COL_BG_BLACK);
-    canvas->fillCircle(LED_X, LED_Y + 5, 8, isConnected ? COL_PKT_BLUE : 0xF800);
+    
+    uint16_t ledColor;
+    if (isFlashing) {
+        ledColor = ((millis() / 500) % 2 == 0) ? NAV_ORANGE : COL_BG_BLACK;
+    } else {
+        ledColor = isConnected ? COL_PKT_BLUE : 0xF800;
+    }
+    canvas->fillCircle(LED_X, LED_Y + 5, 8, ledColor);
     
     canvas->setFont(&FreeSans12pt8b);
     canvas->setTextSize(1); 
@@ -171,7 +233,14 @@ void renderNavScreen(Arduino_Canvas *canvas, int navIcon, int turnMod, float cur
     unsigned long now = millis();
     canvas->fillScreen(COL_BG_BLACK);
     
-    if (!isConnected) canvas->fillCircle(LED_X, LED_Y, LED_R, 0xF800);
+    uint16_t ledColor;
+    if (isFlashing) {
+        ledColor = ((millis() / 500) % 2 == 0) ? NAV_ORANGE : COL_BG_BLACK;
+    } else {
+        ledColor = isConnected ? COL_PKT_BLUE : 0xF800;
+    }
+    canvas->fillCircle(LED_X, LED_Y, LED_R, ledColor);
+    
     canvas->drawCircle(120, 120, 117, COL_DIM_GRAY);
 
     // Heading-Punkt Logik

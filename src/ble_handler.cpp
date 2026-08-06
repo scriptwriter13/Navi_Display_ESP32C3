@@ -1,9 +1,7 @@
 // FILE: src/ble_handler.cpp
 // STATUS: MASTER ANCHOR BikeNav_C3 - MODULAR BLE HANDLER
 // DATE: 2026-03-29
-// CHANGE: Aufruf von printNavJson() nach Nav-Updates für ACT/NEXT JSON-Output.
-// CHANGE: NAV-Präfix Parsing hinzugefügt.
-// CHANGE: Ignoriere "0 m" Updates im OSMAND-Block.
+// CHANGE: OTA-Service, Hardware-Version Abfrage (get_hw) und orangen Flash-Modus implementiert.
 
 #include "ble_handler.h"
 #include "logic.h"
@@ -15,7 +13,10 @@ extern String displayText, streetNumber, nextStreet, pointNumber;
 extern float currentDist, startDist, nextDist, angleExtraDist, lastKmh, currentHeading;
 extern unsigned long arrivalTime, lastSpdTime, lastPktTime, lastCalcTime, lastPreviewUpdateTime;
 extern bool isConnected, isReverse, actionActive, previewPendingClear;
+extern bool isFlashing;
 extern int navIcon, turnMod, nextNavIcon, nextTurnMod, spdWaitCount;
+
+BLECharacteristic *pUARTChar = nullptr;
 
 void wakeup();
 void logLogicStatus();
@@ -28,9 +29,26 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
         // Golden Rule 1: Rohdaten immer ausgeben
         Serial.print(">>> RX-RAW: "); Serial.println(rawValue);
         
+        // Reboot-Logik (falls Nachricht über UART kommt)
+        if (rawValue.indexOf("OTA Übertragung abgeschlossen") >= 0) {
+            Serial.println(">>> [SYSTEM]: OTA Abschluss erkannt, starte neu...");
+            delay(500);
+            ESP.restart();
+        }
+
         String incoming = fixUtf8(rawValue); 
         String lowRaw = incoming; 
         lowRaw.toLowerCase(); 
+        lowRaw.trim(); // WICHTIG: Leerzeichen/Zeilenumbrüche entfernen
+        
+        // NEU: Auf Anfrage der App antworten
+        if (lowRaw == "get_hw") {
+            String msg = "HW:" + String(HARDWARE_VERSION);
+            pChar->setValue(msg.c_str()); // Antwort auf der gleichen Characteristic
+            pChar->notify();              // Notification senden
+            Serial.print(">>> [BLE-TX]: "); Serial.println(msg);
+            return;
+        }
         
         if (lowRaw.startsWith("status:")) return; 
         
@@ -156,7 +174,11 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
 };
 
 class MyServerCallbacks: public BLEServerCallbacks {
-    void onConnect(BLEServer* pS) { isConnected = true; wakeup(); Serial.println(">>> [BLE]: Verbunden!"); }
+    void onConnect(BLEServer* pS) { 
+        isConnected = true; 
+        wakeup(); 
+        Serial.println(">>> [BLE]: Verbunden!"); 
+    }
     void onDisconnect(BLEServer* pS) { 
         isConnected = false; 
         delay(100); 
@@ -165,34 +187,72 @@ class MyServerCallbacks: public BLEServerCallbacks {
     }
 };
 
+class MyOTACallbacks: public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pChar) {
+        String value = String(pChar->getValue().c_str());
+        Serial.print(">>> [OTA-RX]: "); Serial.println(value);
+        
+        if (value.startsWith("START:")) {
+            isFlashing = true;
+            pChar->setValue("READY");
+            pChar->notify();
+            Serial.println(">>> [OTA-TX]: READY gesendet, Flash-Modus AN");
+        }
+        // Reboot-Logik bei Abschluss
+        else if (value.indexOf("abgeschlossen") >= 0) {
+            isFlashing = false;
+            Serial.println(">>> [OTA]: Übertragung fertig, starte neu...");
+            delay(500);
+            ESP.restart();
+        }
+    }
+};
+
 void setupBLE(const char* deviceName) {
     BLEDevice::init(deviceName);
     BLEServer *pS = BLEDevice::createServer();
     pS->setCallbacks(new MyServerCallbacks());
     
+    // 1. UART Service (Unverändert)
     BLEService *pSer = pS->createService("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
-    BLECharacteristic *pC = pSer->createCharacteristic(
+    pUARTChar = pSer->createCharacteristic(
         "6E400002-B5A3-F393-E0A9-E50E24DCCA9E", 
-        BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR
+        BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR | BLECharacteristic::PROPERTY_NOTIFY
     );
-    pC->setCallbacks(new MyCharCallbacks());
+    pUARTChar->addDescriptor(new BLE2902());
+    pUARTChar->setCallbacks(new MyCharCallbacks());
     pSer->start();
 
+    // 2. OTA Service (Mit Notify-Eigenschaft für Rückkanal)
+    BLEService *pOTAService = pS->createService("1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0");
+    BLECharacteristic *pOTAC = pOTAService->createCharacteristic(
+        "1D14D6EF-FD63-4FA1-BFA4-8F47B42119F0",
+        BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR | BLECharacteristic::PROPERTY_NOTIFY
+    );
+    pOTAC->addDescriptor(new BLE2902()); // Erforderlich für Notify
+    pOTAC->setCallbacks(new MyOTACallbacks());
+    pOTAService->start();
+
+    // 3. Advertising (Explizite Definition beider Pakete)
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
     
+    // Primäres Advertising: OTA Service (Flags + OTA UUID)
+    // Dies zwingt den OTA-Service in das primäre Paket
     BLEAdvertisementData advData;
     advData.setFlags(0x06); 
-    advData.setCompleteServices(BLEUUID("6E400001-B5A3-F393-E0A9-E50E24DCCA9E"));
+    advData.setCompleteServices(BLEUUID("1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0"));
     pAdvertising->setAdvertisementData(advData);
 
+    // Scan Response: UART Service + Name
+    // Dies wird erst geladen, wenn die App die Details anfragt
     BLEAdvertisementData scanResponseData;
     scanResponseData.setName(deviceName);
-    scanResponseData.setAppearance(0x0440); 
+    scanResponseData.setCompleteServices(BLEUUID("6E400001-B5A3-F393-E0A9-E50E24DCCA9E"));
     pAdvertising->setScanResponseData(scanResponseData);
 
     pAdvertising->setScanResponse(true);
     pAdvertising->start();
-    Serial.println(">>> [BLE]: Advertising mit UUID & Name gestartet.");
+    Serial.println(">>> [BLE]: Advertising mit expliziter Trennung gestartet.");
 }
 
 String getBLEAddress() { return BLEDevice::getAddress().toString().c_str(); }

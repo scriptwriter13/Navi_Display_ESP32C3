@@ -1,8 +1,26 @@
+/*                                                                                                                                        
+ * Copyright (C) 2026 by scriptwriter13                                                                                       
+ *                                                                                                                                        
+ * Dieses Programm ist freie Software: Sie können es unter den Bedingungen der                                                            
+ * GNU General Public License, wie von der Free Software Foundation veröffentlicht,                                                       
+ * entweder Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren                                                                  
+ * Version, weiterverbreiten und/oder modifizieren.                                                                                       
+ *                                                                                                                                        
+ * Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber                                                                 
+ * OHNE JEDE GEWÄHRLEISTUNG, sogar ohne die implizite Gewährleistung der                                                                  
+ * MARKTGÄNGIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die                                                                     
+ * GNU General Public License für weitere Details.                                                                                        
+ *                                                                                                                                        
+ * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem                                                              
+ * Programm erhalten haben. Wenn nicht, siehe <https://www.gnu.org/licenses/>.                                                            
+ */
 // FILE: src/main.cpp
-// STATUS: FINAL STABLE - POWER-TIMER FIX + GESTURE DEBOUNCE + LIGHT SLEEP + WAKEUP FIX
-// DATE: 2026-03-10
+// STATUS: FINAL STABLE - POWER-TIMER FIX + GESTURE DEBOUNCE + LIGHT SLEEP + WAKEUP FIX + OTA + ORANGE FLASH
+// DATE: 2026-03-29
 // CHANGE: Entfernung von esp_sleep_enable_bt_wakeup() für C3/S3 Kompatibilität
 // CHANGE: Casual Greeting angepasst
+// CHANGE: OTA-Service, Hardware-Version Abfrage (get_hw) und orangen Flash-Modus implementiert
+// STATUS: Lizenz-Header geprüft und bestätigt.
 
 #include <Arduino.h>
 #include <Arduino_GFX_Library.h>
@@ -31,6 +49,7 @@ unsigned long lastPktTime = 0, lastCalcTime = 0, lastPreviewUpdateTime = 0;
 unsigned long lastGestureTime = 0; // Debounce Timer für Gesten
 bool previewPendingClear = false, isConnected = false, displayOn = true, isRerouting = false;
 bool actionActive = false, isReverse = false, justWokeUp = false; 
+bool isFlashing = false;
 int navIcon = 0, turnMod = 0, nextNavIcon = 0, nextTurnMod = 0; 
 int brightness = 200, displayRot = 0, spdWaitCount = 0; 
 Preferences prefs;

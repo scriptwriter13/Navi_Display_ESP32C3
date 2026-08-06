@@ -1,3 +1,19 @@
+/*                                                                                                                                        
+ * Copyright (C) 2026 by scriptwriter13                                                                                       
+ *                                                                                                                                        
+ * Dieses Programm ist freie Software: Sie können es unter den Bedingungen der                                                            
+ * GNU General Public License, wie von der Free Software Foundation veröffentlicht,                                                       
+ * entweder Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren                                                                  
+ * Version, weiterverbreiten und/oder modifizieren.                                                                                       
+ *                                                                                                                                        
+ * Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber                                                                 
+ * OHNE JEDE GEWÄHRLEISTUNG, sogar ohne die implizite Gewährleistung der                                                                  
+ * MARKTGÄNGIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die                                                                     
+ * GNU General Public License für weitere Details.                                                                                        
+ *                                                                                                                                        
+ * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem                                                              
+ * Programm erhalten haben. Wenn nicht, siehe <https://www.gnu.org/licenses/>.                                                            
+ */
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
@@ -13,6 +29,7 @@ extern float lastKmh;
 extern bool isConnected;
 extern int navIcon;
 extern int turnMod;
+extern bool isFlashing; // Status-Flag für orangen Blink-Modus während OTA-Flash
 
 // Render-Funktionen
 void renderStartScreen(Arduino_Canvas *canvas, bool connected, String mac);

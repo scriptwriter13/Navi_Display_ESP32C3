@@ -29,7 +29,12 @@ Um die Stabilität des Projekts zu gewährleisten, müssen folgende Regeln bei j
 * **No-Strip Policy**: Debug-Logs bleiben im Code, außer es wird explizit ein "Production Build" angefordert.
 * **MAC-Visibility**: Die MAC-Adresse wird ausschließlich auf dem Start-Screen angezeigt, um den Nav-Screen sauber zu halten.
 
-## 4. Abhängigkeiten
+## 4. Status-Management
+Das System nutzt globale Status-Flags zur Synchronisation zwischen BLE-Events und Rendering:
+* `isConnected`: Steuert die blaue LED.
+* `isFlashing`: Steuert den **Orange Flash Mode** während OTA-Updates. Wird im `ble_handler` gesetzt und in `graphics.cpp` ausgewertet.
+
+## 5. Abhängigkeiten
 * `Arduino_GFX`: Für das GC9A01 Rund-Display.
 * `NimBLE-Arduino`: Für die Bluetooth-Kommunikation.
 * `CST816S`: Für die Touch-Gesten-Steuerung.
