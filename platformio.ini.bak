@@ -1,0 +1,48 @@
+[platformio]
+default_envs = ESP32-2424S012
+
+[env]
+platform = espressif32@6.5.0
+framework = arduino
+board_build.partitions = huge_app.csv
+
+extra_scripts = pre:scripts/get_git_revision.py
+
+monitor_speed = 115200
+upload_speed = 115200
+
+upload_flags =
+    --before=default_reset
+    --after=hard_reset
+
+
+lib_deps =
+    moononournation/GFX Library for Arduino @ 1.4.0
+    https://github.com/h2zero/NimBLE-Arduino
+
+[env:ESP32-2424S012]
+lib_deps = 
+	${env.lib_deps}
+        https://github.com/fbiego/CST816S
+
+board = esp32-c3-devkitm-1
+build_flags =
+    -D FW_VERSION=\"1.1.1\"
+    -D USER_SETUP_LOADED=1
+    -I include
+    -include include/config.h
+    -D ARDUINO_USB_MODE=1
+    -D ARDUINO_USB_CDC_ON_BOOT=1
+#    -D MODEL_ESP32_2424S012=1
+    -D HARDWARE_VERSION=\"ESP32-2424S012\"
+    -D TFT_BL=3
+    -D SCK_PIN=6
+    -D MOSI_PIN=7
+    -D MISO_PIN=-1
+    -D DC_PIN=2
+    -D CS_PIN=10
+    -D RST_PIN=1
+    -D TOUCH_SDA=4
+    -D TOUCH_SCL=5
+    -D TOUCH_INT=0
+    -D TOUCH_RST=1
