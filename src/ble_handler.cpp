@@ -50,6 +50,15 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
             return;
         }
         
+        // NEU: Auf Anfrage der App antworten (FW)
+        if (lowRaw == "get_fw") {
+            String msg = "FW:" + String(FW_VERSION);
+            pChar->setValue(msg.c_str());
+            pChar->notify();
+            Serial.print(">>> [BLE-TX]: "); Serial.println(msg);
+            return;
+        }
+        
         if (lowRaw.startsWith("status:")) return; 
         
         // NAV-Präfix bereinigen

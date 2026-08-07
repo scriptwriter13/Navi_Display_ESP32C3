@@ -20,10 +20,11 @@ Die App muss sich mit dem ESP32 verbinden und den folgenden Service sowie die Ch
 ## 2. Protokoll-Ablauf                                                                                                                    
 Das Protokoll ist zustandsbasiert und erfordert eine Autorisierung.                                                                       
                                                                                                                                           
-### Schritt A: Autorisierung & Hardware-Check                                                                                              
+### Schritt A: Autorisierung & Hardware-Check
 1. **Hardware-Version abfragen:** Sende `get_hw` an die UART-Characteristic (`6E400002...`). Das Device antwortet mit `HW:ESP32-2424S012-V1.0`.
-2. **OTA Initialisieren:** Sende an die OTA-Characteristic: `"START:" + OTA_SECRET_KEY`
-   *(Der `OTA_SECRET_KEY` ist in `include/config.h` definiert).*                                                                             
+2. **Firmware-Version abfragen:** Sende `get_fw` an die UART-Characteristic (`6E400002...`). Das Device antwortet mit `FW:1.1.1` (entsprechend der in der `platformio.ini` definierten Version).
+3. **OTA Initialisieren:** Sende an die OTA-Characteristic: `"START:" + OTA_SECRET_KEY`
+   *(Der `OTA_SECRET_KEY` ist in `include/config.h` definiert).*
                                                                                                                                           
 **Antwort des Devices:** Das Device antwortet mit `"READY"`, sobald es bereit ist.                                                                                                                                          
                                                                                                                                           

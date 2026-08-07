@@ -17,6 +17,7 @@
 // FILE: src/main.cpp
 // STATUS: FINAL STABLE - POWER-TIMER FIX + GESTURE DEBOUNCE + LIGHT SLEEP + WAKEUP FIX + OTA + ORANGE FLASH + DYNAMIC TOUCH
 // DATE: 2026-03-29
+// NOTE: Ich arbeite mit der Version vom 29. März weiter.
 
 #include <Arduino.h>
 #include <Arduino_GFX_Library.h>
