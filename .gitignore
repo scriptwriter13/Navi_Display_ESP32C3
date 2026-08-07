@@ -4,6 +4,7 @@
 .vscode/launch.json
 .vscode/ipch
 backup
+/build_output
 test/bike_log.txt
 gcp.sh
 .aider*
