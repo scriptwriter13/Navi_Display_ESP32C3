@@ -15,12 +15,8 @@
  * Programm erhalten haben. Wenn nicht, siehe <https://www.gnu.org/licenses/>.                                                            
  */
 // FILE: src/main.cpp
-// STATUS: FINAL STABLE - POWER-TIMER FIX + GESTURE DEBOUNCE + LIGHT SLEEP + WAKEUP FIX + OTA + ORANGE FLASH
+// STATUS: FINAL STABLE - POWER-TIMER FIX + GESTURE DEBOUNCE + LIGHT SLEEP + WAKEUP FIX + OTA + ORANGE FLASH + DYNAMIC TOUCH
 // DATE: 2026-03-29
-// CHANGE: Entfernung von esp_sleep_enable_bt_wakeup() für C3/S3 Kompatibilität
-// CHANGE: Casual Greeting angepasst
-// CHANGE: OTA-Service, Hardware-Version Abfrage (get_hw) und orangen Flash-Modus implementiert
-// STATUS: Lizenz-Header geprüft und bestätigt.
 
 #include <Arduino.h>
 #include <Arduino_GFX_Library.h>
@@ -50,6 +46,7 @@ unsigned long lastGestureTime = 0; // Debounce Timer für Gesten
 bool previewPendingClear = false, isConnected = false, displayOn = true, isRerouting = false;
 bool actionActive = false, isReverse = false, justWokeUp = false; 
 bool isFlashing = false;
+bool touchEnabled = false; // Flag für Touch-Erkennung
 int navIcon = 0, turnMod = 0, nextNavIcon = 0, nextTurnMod = 0; 
 int brightness = 200, displayRot = 0, spdWaitCount = 0; 
 Preferences prefs;
@@ -95,12 +92,21 @@ void setup() {
     digitalWrite(TFT_BL, HIGH); 
     analogWrite(TFT_BL, brightness);
     
-    Wire.begin(TOUCH_SDA, TOUCH_SCL); touch.begin();
+    // Touch-Erkennung via I2C
+    Wire.begin(TOUCH_SDA, TOUCH_SCL); 
+    Wire.beginTransmission(0x15);
+    if (Wire.endTransmission() == 0) {
+        Serial.println(">>> [SYSTEM]: CST816S Touch-Chip erkannt.");
+        touchEnabled = true;
+        touch.begin(Wire, TOUCH_INT);
+        
+        // Wakeup Konfiguration nur wenn Touch vorhanden
+        esp_sleep_enable_gpio_wakeup();
+        gpio_wakeup_enable((gpio_num_t)TOUCH_INT, GPIO_INTR_LOW_LEVEL);
+    } else {
+        Serial.println(">>> [SYSTEM]: Kein Touch-Chip gefunden.");
+    }
 
-    // Wakeup Konfiguration für Light Sleep (Kompatibel mit C3/S3)
-    esp_sleep_enable_gpio_wakeup();
-    gpio_wakeup_enable((gpio_num_t)TOUCH_INT, GPIO_INTR_LOW_LEVEL);
-    
     // BLE Setup
     setupBLE("BikeNav_C3");
     macAddr = getBLEAddress();
@@ -115,8 +121,8 @@ void setup() {
 void loop() {
     unsigned long now = millis();
 
-    // 1. Touch-Handler mit Debouncing
-    if (touch.available()) {
+    // 1. Touch-Handler mit Debouncing (nur wenn Chip vorhanden)
+    if (touchEnabled && touch.available()) {
         // Geste auslesen
         String g = touch.gesture(); 
         
