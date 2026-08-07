@@ -1,63 +1,61 @@
 /*
  * Copyright (C) 2026 by scriptwriter13
- *
- * Dieses Programm ist freie Software: Sie können es unter den Bedingungen der
- * GNU General Public License, wie von der Free Software Foundation veröffentlicht,
- * entweder Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren
- * Version, weiterverbreiten und/oder modifizieren.
  */
+:root {
+    --bg-color: #050505;
+    --card-bg: #151515;
+    --accent-green: #55FF55; /* NAV_GREEN */
+    --accent-orange: #FF8000; /* NAV_ORANGE */
+    --text-main: #ffffff;
+    --text-dim: #b0b0b0;
+}
+
 body {
-    background-color: #121212;
-    color: #e0e0e0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 40px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 40px;
-    border-bottom: 2px solid #07E0; /* Green Accent */
-    padding-bottom: 20px;
+header { text-align: center; margin-bottom: 50px; }
+
+.hero-image {
     width: 100%;
-    max-width: 800px;
-}
-
-h1 { color: #07E0; margin: 0; }
-
-main {
-    max-width: 800px;
-    width: 100%;
-}
-
-section {
-    background: #1e1e1e;
-    padding: 20px;
-    border-radius: 8px;
+    max-width: 250px;
+    border-radius: 20px;
+    border: 2px solid var(--accent-green);
+    box-shadow: 0 0 30px rgba(85, 255, 85, 0.15);
     margin-bottom: 20px;
 }
 
-h2 { color: #FD20; } /* Orange Accent */
+h1 { color: var(--accent-green); font-size: 3rem; margin: 0; letter-spacing: -1px; }
+h2 { color: var(--accent-orange); border-left: 4px solid var(--accent-orange); padding-left: 15px; margin-top: 0; }
+
+main { max-width: 700px; width: 100%; }
+
+section {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    border: 1px solid #333;
+}
 
 .btn {
     display: inline-block;
-    background: #07E0;
+    background: var(--accent-green);
     color: #000;
-    padding: 10px 20px;
+    padding: 12px 25px;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-weight: bold;
-    margin-top: 10px;
+    transition: all 0.3s ease;
 }
 
-.btn:hover { background: #05a0; }
+.btn:hover { background: #fff; transform: translateY(-2px); }
 
-footer {
-    margin-top: 40px;
-    font-size: 0.8em;
-    color: #777;
-}
+footer { margin-top: 50px; font-size: 0.85rem; color: #555; }

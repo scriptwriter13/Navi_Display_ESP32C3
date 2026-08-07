@@ -1,44 +1,31 @@
 <!--
  * Copyright (C) 2026 by scriptwriter13
- *
- * Dieses Programm ist freie Software: Sie können es unter den Bedingungen der
- * GNU General Public License, wie von der Free Software Foundation veröffentlicht,
- * entweder Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren
- * Version, weiterverbreiten und/oder modifizieren.
  -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BikeNav_C3 - Open Source Bike Navigation</title>
+    <title>BikeNav_C3 | Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
+        <!-- Pfad: docs/assets/logo.png -->
+        <img src="assets/logo.png" alt="BikeNav_C3 Logo" class="hero-image">
         <h1>BikeNav_C3</h1>
-        <p>Die smarte Open-Source-Navigation für dein Fahrrad.</p>
+        <p>Open Source Navigation für dein Cockpit.</p>
     </header>
 
     <main>
-        <section id="intro">
-            <h2>Was ist BikeNav_C3?</h2>
-            <p>Ein kompaktes, ESP32-basiertes Navigations-Display, das via Bluetooth mit deinem Smartphone kommuniziert. Minimalistisch, effizient und voll anpassbar.</p>
+        <section>
+            <h2>Über das Projekt</h2>
+            <p>BikeNav_C3 ist ein hochoptimiertes Navigations-Display für Radfahrer. Minimalistisch, schnell und voll integriert.</p>
         </section>
-
-        <section id="features">
-            <h2>Features</h2>
-            <ul>
-                <li><strong>BLE-Konnektivität:</strong> Nahtlose Anbindung an Navigations-Apps.</li>
-                <li><strong>OTA-Updates:</strong> Firmware-Updates direkt über Bluetooth.</li>
-                <li><strong>Hardware-Flexibilität:</strong> Dynamische Touch-Erkennung (CST816S).</li>
-                <li><strong>Energieeffizient:</strong> Light-Sleep Modus für lange Touren.</li>
-            </ul>
-        </section>
-
-        <section id="docs">
+        
+        <section>
             <h2>Dokumentation</h2>
-            <p>Technische Details und Protokolle findest du hier:</p>
+            <p>Technische Details und Protokolle:</p>
             <a href="BLE_OTA.md" class="btn">BLE OTA Spezifikation</a>
         </section>
     </main>
