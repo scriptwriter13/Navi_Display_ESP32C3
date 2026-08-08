@@ -31,3 +31,8 @@
 - [x] Implementierung: Git-Hash via Python-Skript (scripts/get_git_revision.py)
 - [x] Fix: Python-Skript-Integration in platformio.ini aktiviert
 - [x] Fix: Bereinigung und Korrektur von scripts/get_git_revision.py
+- [x] Implementierung: Expliziter "DISCONNECT" Befehl für sauberes Advertising-Reset
+- [x] Optimierung: BLE-Watchdog Timeout auf 15s reduziert (App-Alive: 10s)
+- [x] Refactoring: FW_VERSION in include/fw_version.h ausgelagert und Build-Flag entfernt
+- [x] Fix: upload_port in platformio.ini konfiguriert
+- [x] Anpassung BLE Advertising Intervall auf 2s

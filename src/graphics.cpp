@@ -283,11 +283,20 @@ void renderNavScreen(Arduino_Canvas *canvas, int navIcon, int turnMod, float cur
                 canvas->setFont(&FreeSans12pt8b);
                 canvas->setTextSize(2); 
                 canvas->setTextColor(DIST_MAIN_COLOR);
-                String dStr = (isAlert || (int)currentDist <= 0) ? "0m" : ((currentDist >= 1000.0f) ? String(currentDist/1000.0f, 1)+"km" : String((int)currentDist)+"m");
-                int16_t tx, ty; uint16_t tw, th;
-                canvas->getTextBounds(dStr.c_str(), 0, 0, &tx, &ty, &tw, &th);
-                canvas->setCursor(DIST_MAIN_X - (tw / 2), DIST_MAIN_Y + (th / 2)); 
-                canvas->print(dStr);
+                
+                String dStr = "";
+                if (isAlert) {
+                    dStr = "0m";
+                } else if (currentDist > 0) {
+                    dStr = (currentDist >= 1000.0f) ? String(currentDist/1000.0f, 1)+"km" : String((int)currentDist)+"m";
+                }
+
+                if (dStr.length() > 0) {
+                    int16_t tx, ty; uint16_t tw, th;
+                    canvas->getTextBounds(dStr.c_str(), 0, 0, &tx, &ty, &tw, &th);
+                    canvas->setCursor(DIST_MAIN_X - (tw / 2), DIST_MAIN_Y + (th / 2)); 
+                    canvas->print(dStr);
+                }
 
                 // --- KLAMMER-DISTANZ & PUNKT-NUMMER (FIXED STRING BUILDING) ---
                 if (angleExtraDist > 0 || (pointNumber.length() > 0 && pointNumber != "0")) {

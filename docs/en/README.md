@@ -6,6 +6,7 @@ Welcome to the documentation for the BikeNav_C3 project. This system provides mo
 - **OTA Update Service**: Firmware updates can now be performed conveniently via Bluetooth Low Energy (BLE).
 - **Hardware Versioning**: The hardware version can be queried via `get_hw` using the UART interface.
 - **Orange Flash Mode**: During an OTA update, the display LED flashes orange to visually signal the flashing process.
+- **Build Automation**: Git-Hash integration via Python script and build flags for versioning.
 
 ## Documentation Overview
 - [BLE OTA Protocol Specification](../BLE_OTA.md)

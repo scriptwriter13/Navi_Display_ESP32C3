@@ -122,6 +122,13 @@ void setup() {
 void loop() {
     unsigned long now = millis();
 
+    // 0. BLE Watchdog: Wenn 15s keine Daten, erzwinge Reset
+    if (isConnected && (now - lastPktTime > 15000)) {
+        Serial.println(">>> [BLE]: Timeout! Verbindung tot. Force-Reset.");
+        restartAdvertising();
+        isConnected = false; 
+    }
+
     // 1. Touch-Handler mit Debouncing (nur wenn Chip vorhanden)
     if (touchEnabled && touch.available()) {
         // Geste auslesen

@@ -7,6 +7,7 @@
 #include "logic.h"
 #include "graphics.h"
 #include "config.h"
+#include "fw_version.h"
 
 // Zugriff auf globale Variablen der main.cpp
 extern String displayText, streetNumber, nextStreet, pointNumber;
@@ -17,14 +18,26 @@ extern bool isFlashing;
 extern int navIcon, turnMod, nextNavIcon, nextTurnMod, spdWaitCount;
 
 BLECharacteristic *pUARTChar = nullptr;
+BLEServer *pServer = nullptr;
 
 void wakeup();
 void logLogicStatus();
 
+void sendAck(BLECharacteristic *pChar) {
+    pChar->setValue("ACK");
+    pChar->notify();
+    Serial.println(">>> [BLE-TX]: ACK");
+}
+
 class MyCharCallbacks: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pChar) {
+        lastPktTime = millis(); // Watchdog zurücksetzen
         wakeup(); 
         String rawValue = String(pChar->getValue().c_str());
+        bool shouldAck = false;
+        
+        // DEBUG: Prüfen ob Daten ankommen
+        Serial.print(">>> [BLE-RX]: "); Serial.println(rawValue);
         
         // Golden Rule 1: Rohdaten immer ausgeben
         Serial.print(">>> RX-RAW: "); Serial.println(rawValue);
@@ -40,6 +53,19 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
         String lowRaw = incoming; 
         lowRaw.toLowerCase(); 
         lowRaw.trim(); // WICHTIG: Leerzeichen/Zeilenumbrüche entfernen
+        
+        // NEU: Expliziter Disconnect-Befehl
+        if (lowRaw == "disconnect") {
+            Serial.println(">>> [BLE]: Expliziter Disconnect-Befehl empfangen.");
+            restartAdvertising();
+            return; 
+        }
+
+        // NEU: Expliziter Keep-Alive Handler
+        if (lowRaw == "stt:alive") {
+            Serial.println(">>> [BLE]: Keep-Alive empfangen");
+            return; // Timer wurde bereits durch wakeup() oben zurückgesetzt
+        }
         
         // NEU: Auf Anfrage der App antworten
         if (lowRaw == "get_hw") {
@@ -112,6 +138,7 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
             if (tCount >= 3) { pointNumber = tokens[2]; pointNumber.trim(); }
             
             lastPktTime = millis();
+            shouldAck = true;
             return;
         }
 
@@ -151,6 +178,7 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
             actionActive = false; arrivalTime = 0; lastCalcTime = millis(); 
             logLogicStatus(); 
             printNavJson(); // Output ACT/NEXT JSON
+            shouldAck = true;
             return; 
         }
 
@@ -179,18 +207,26 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
         Serial.print(">>> [DISPLAY-TEXT]: "); Serial.println(displayText); 
         logLogicStatus();
         printNavJson(); // Finaler Output der Navigationsdaten als JSON
+        shouldAck = true;
+        
+        if (shouldAck) {
+            sendAck(pChar);
+        }
     }
 };
 
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pS) { 
         isConnected = true; 
+        lastPktTime = millis(); // <--- WICHTIG: Timer beim Verbinden zurücksetzen!
         wakeup(); 
         Serial.println(">>> [BLE]: Verbunden!"); 
     }
     void onDisconnect(BLEServer* pS) { 
         isConnected = false; 
-        delay(100); 
+        // Wir starten das Advertising hier neu, falls die App sauber trennt.
+        // Wenn der Watchdog (restartAdvertising) aufgerufen wurde, 
+        // ist das Advertising bereits gestoppt/gestartet worden.
         BLEDevice::startAdvertising(); 
         Serial.println(">>> [BLE]: Verbindung verloren - Suche aktiv..."); 
     }
@@ -219,11 +255,11 @@ class MyOTACallbacks: public BLECharacteristicCallbacks {
 
 void setupBLE(const char* deviceName) {
     BLEDevice::init(deviceName);
-    BLEServer *pS = BLEDevice::createServer();
-    pS->setCallbacks(new MyServerCallbacks());
+    pServer = BLEDevice::createServer();
+    pServer->setCallbacks(new MyServerCallbacks());
     
     // 1. UART Service (Unverändert)
-    BLEService *pSer = pS->createService("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
+    BLEService *pSer = pServer->createService("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
     pUARTChar = pSer->createCharacteristic(
         "6E400002-B5A3-F393-E0A9-E50E24DCCA9E", 
         BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR | BLECharacteristic::PROPERTY_NOTIFY
@@ -233,7 +269,7 @@ void setupBLE(const char* deviceName) {
     pSer->start();
 
     // 2. OTA Service (Mit Notify-Eigenschaft für Rückkanal)
-    BLEService *pOTAService = pS->createService("1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0");
+    BLEService *pOTAService = pServer->createService("1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0");
     BLECharacteristic *pOTAC = pOTAService->createCharacteristic(
         "1D14D6EF-FD63-4FA1-BFA4-8F47B42119F0",
         BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR | BLECharacteristic::PROPERTY_NOTIFY
@@ -260,8 +296,38 @@ void setupBLE(const char* deviceName) {
     pAdvertising->setScanResponseData(scanResponseData);
 
     pAdvertising->setScanResponse(true);
+    
+    // Advertising Intervall auf 2s setzen (3200 * 0.625ms = 2000ms)
+    pAdvertising->setMinInterval(3200);
+    pAdvertising->setMaxInterval(3200);
+    
     pAdvertising->start();
     Serial.println(">>> [BLE]: Advertising mit expliziter Trennung gestartet.");
+}
+
+void restartAdvertising() {
+    Serial.println(">>> [BLE]: Force-Reset Advertising...");
+    
+    // 1. Advertising stoppen
+    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+    pAdvertising->stop();
+
+    // 2. Alle Verbindungen erzwingen zu trennen
+    if (pServer) {
+        // Korrektur: Argument 'true' für getPeerDevices hinzugefügt
+        std::map<uint16_t, conn_status_t> peers = pServer->getPeerDevices(true);
+        
+        // Korrektur: Klassische Iterator-Schleife statt C++17 Structured Bindings
+        for (auto const& pair : peers) {
+            pServer->disconnect(pair.first);
+        }
+    }
+
+    // 3. Advertising neu starten
+    pAdvertising->setMinInterval(3200);
+    pAdvertising->setMaxInterval(3200);
+    pAdvertising->start();
+    Serial.println(">>> [BLE]: Advertising neu gestartet.");
 }
 
 String getBLEAddress() { return BLEDevice::getAddress().toString().c_str(); }

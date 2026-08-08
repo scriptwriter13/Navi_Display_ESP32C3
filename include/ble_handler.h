@@ -24,6 +24,7 @@
 #include <BLE2902.h>
 
 void setupBLE(const char* deviceName);
+void restartAdvertising();
 String getBLEAddress();
 
 #endif

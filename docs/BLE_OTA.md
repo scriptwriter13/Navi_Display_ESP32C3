@@ -41,7 +41,20 @@ Der ESP32 wird daraufhin das Update validieren und automatisch neu starten.
 ## 3. Visuelles Feedback (Orange Flash Mode)
 Während der OTA-Übertragung wechselt das Display-Lämpchen in den **Orange Flash Mode** (oranges Blinken). Dies signalisiert dem Nutzer, dass das Gerät aktiv geflasht wird und nicht unterbrochen werden darf.
 
-## 4. Implementierungshinweise für Android                                                                                                
+## 4. Keep-Alive Mechanismus
+Um zu verhindern, dass das Gerät während einer aktiven Navigation in den Standby-Modus wechselt, sollte die App in regelmäßigen Abständen ein Keep-Alive-Signal senden.
+
+*   **Befehl:** `STT:ALIVE`
+*   **Intervall:** Alle 10 Sekunden.
+*   **Wirkung:** Das Gerät setzt den internen `powerTimer` zurück und bleibt aktiv. Bei Ausbleiben des Signals für mehr als 15 Sekunden wird die Verbindung als unterbrochen gewertet und das Advertising neu gestartet.
+
+## 5. Verbindungssteuerung
+Um eine saubere Trennung der Verbindung zu gewährleisten (z.B. beim Beenden der App), sollte die App den Befehl `DISCONNECT` senden.
+
+*   **Befehl:** `DISCONNECT`
+*   **Wirkung:** Das Gerät trennt die aktive Verbindung sofort und startet das Advertising neu, um für eine neue Verbindung bereit zu sein.
+
+## 6. Implementierungshinweise für Android                                                                                                
                                                                                                                                           
 1.  **MTU Negotiation:** Fordere nach dem Verbindungsaufbau eine höhere MTU an (z.B. `requestMtu(517)`).
 2.  **Flow Control:** Baue eine Verzögerung von ca. **20ms bis 50ms** zwischen den Paketen ein.
