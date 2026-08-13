@@ -18,6 +18,8 @@
 // STATUS: FINAL STABLE - POWER-TIMER FIX + GESTURE DEBOUNCE + LIGHT SLEEP + WAKEUP FIX + OTA + ORANGE FLASH + DYNAMIC TOUCH
 // DATE: 2026-03-29
 // NOTE: Ich arbeite mit der Version vom 29. März weiter.
+// HINWEIS ZU BISECT: Ich habe keinen Zugriff auf dein lokales Git-Log. 
+// Bitte führe `git log --oneline` aus und wähle einen Commit, bei dem OTA noch funktionierte, als "good".
 
 #include <Arduino.h>
 #include <Arduino_GFX_Library.h>
@@ -25,6 +27,7 @@
 #include <Wire.h>
 #include <Preferences.h>
 #include <esp_sleep.h>
+#include <driver/uart.h>
 
 #include "config.h"
 #include "layout_config.h" 
@@ -48,6 +51,8 @@ bool previewPendingClear = false, isConnected = false, displayOn = true, isRerou
 bool actionActive = false, isReverse = false, justWokeUp = false; 
 bool isFlashing = false;
 bool touchEnabled = false; // Flag für Touch-Erkennung
+bool firmwareSelected = false; // NEU: Status der Auswahl
+bool debugMode = true; // Manuelle Steuerung: true = Debug (kein Sleep), false = Prod (Sleep erlaubt)
 int navIcon = 0, turnMod = 0, nextNavIcon = 0, nextTurnMod = 0; 
 int brightness = 200, displayRot = 0, spdWaitCount = 0; 
 Preferences prefs;
@@ -80,6 +85,14 @@ void wakeup() {
 
 void setup() {
     Serial.begin(115200);
+    
+    // Manuelle Debug-Steuerung
+    if (debugMode) {
+        Serial.println(">>> DEBUG-MODUS AKTIV: Light-Sleep GESPERRT <<<");
+    } else {
+        Serial.println(">>> PRODUKTIONS-MODUS: Light-Sleep ERLAUBT <<<");
+    }
+
     prefs.begin("bikenav", false); 
     displayRot = prefs.getInt("rot", 0);
     brightness = prefs.getInt("bright", 200);
@@ -108,6 +121,10 @@ void setup() {
         Serial.println(">>> [SYSTEM]: Kein Touch-Chip gefunden.");
     }
 
+    // UART Wakeup konfigurieren
+    uart_set_wakeup_threshold(UART_NUM_0, 1);
+    esp_sleep_enable_uart_wakeup(UART_NUM_0);
+
     // BLE Setup
     setupBLE("BikeNav_C3");
     macAddr = getBLEAddress();
@@ -122,11 +139,18 @@ void setup() {
 void loop() {
     unsigned long now = millis();
 
-    // 0. BLE Watchdog: Wenn 15s keine Daten, erzwinge Reset
-    if (isConnected && (now - lastPktTime > 15000)) {
+    // 0. BLE Watchdog: Wenn 15s keine Daten, erzwinge Reset (während OTA 60s)
+    unsigned long timeout = isFlashing ? 60000 : 15000;
+    if (isConnected && (now - lastPktTime > timeout)) {
         Serial.println(">>> [BLE]: Timeout! Verbindung tot. Force-Reset.");
         restartAdvertising();
         isConnected = false; 
+    }
+
+    // 0.1 OTA-Sicherheits-Timeout: Wenn 10s keine OTA-Daten, Flash-Modus abbrechen
+    if (isFlashing && (now - lastPktTime > 10000)) {
+        Serial.println(">>> [OTA]: Timeout! Flash-Modus abgebrochen (keine Daten).");
+        isFlashing = false;
     }
 
     // 1. Touch-Handler mit Debouncing (nur wenn Chip vorhanden)
@@ -143,7 +167,13 @@ void loop() {
             // Timer zurücksetzen bei Interaktion
             powerTimer = now; 
 
-            if (g.indexOf("LEFT") >= 0) { 
+            // NEU: Wenn keine Geste erkannt wurde, ist es ein Tap -> Auswahl umschalten
+            if (g == "NONE") {
+                firmwareSelected = !firmwareSelected;
+                Serial.printf(">>> [UI]: Firmware Auswahl: %s\n", firmwareSelected ? "AN" : "AUS");
+                lastGestureTime = now;
+            }
+            else if (g.indexOf("LEFT") >= 0) { 
                 displayRot = (displayRot + 1) % 4; 
                 gfx->setRotation(displayRot); 
                 prefs.putInt("rot", displayRot); 
@@ -188,8 +218,8 @@ void loop() {
         }
     }
     
-    // Wenn Display aus, CPU in Light Sleep versetzen
-    if (!displayOn) { 
+    // Wenn Display aus, CPU in Light Sleep versetzen (nur wenn nicht im Debug-Modus)
+    if (!displayOn && !debugMode) { 
         esp_light_sleep_start();
         return; 
     }
@@ -212,7 +242,7 @@ void loop() {
     // 5. Rendering
     canvas->fillScreen(0);
     if (displayText == "warte auf App" && !isRerouting) {
-        renderStartScreen(canvas, isConnected, macAddr);
+        renderStartScreen(canvas, isConnected, macAddr, firmwareSelected);
     } else {
         renderNavScreen(canvas, navIcon, turnMod, currentDist, startDist, angleExtraDist, 
                         displayText, streetNumber, isConnected, isRerouting, arrivalTime, 

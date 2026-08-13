@@ -32,7 +32,7 @@ extern int turnMod;
 extern bool isFlashing; // Status-Flag für orangen Blink-Modus während OTA-Flash
 
 // Render-Funktionen
-void renderStartScreen(Arduino_Canvas *canvas, bool connected, String mac);
+void renderStartScreen(Arduino_Canvas *canvas, bool connected, String mac, bool highlight = false);
 void renderNavScreen(Arduino_Canvas *canvas, int icon, int mod, float dist, float startD, 
                      float extraD, String text, String streetNum, bool conn, bool reroute, 
                      unsigned long arrival, float heading, bool reverse, unsigned long lastPkt,

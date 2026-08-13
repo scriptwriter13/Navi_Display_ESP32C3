@@ -37,14 +37,8 @@
 #include <Arduino.h>
 #include "FreeSans12pt.h" 
 #include "FreeSans15pt.h" 
-
-// --- Fallback für Build-Flags, falls diese nicht über platformio.ini übergeben werden ---
-#ifndef BUILD_VERSION
-#define BUILD_VERSION "v1.0.0"
-#endif
-#ifndef BUILD_COMMIT
-#define BUILD_COMMIT "dev"
-#endif
+#include "fw_version.h"
+#include "git_version.h"
 
 // Extern deklariert, um auf die Punkt-Nummer aus der Logik/Main zuzugreifen
 extern String pointNumber;
@@ -187,8 +181,14 @@ void drawNavIcon(Arduino_Canvas *canvas, int type, int mod, uint16_t color, int 
     drawSingleNavIcon(canvas, type, mod, color, blX, blY, w, h, 0);
 }
 
+// NEU: Hilfsfunktion für Auswahl-Rahmen
+void drawSelectionBorder(Arduino_Canvas *canvas, int x, int y, int w, int h, uint16_t color) {
+    // Zeichnet einen Rahmen mit etwas Padding
+    canvas->drawRect(x - 5, y - 5, w + 10, h + 10, color);
+}
+
 // --- Startscreen ---
-void renderStartScreen(Arduino_Canvas *canvas, bool isConnected, String macAddr) {
+void renderStartScreen(Arduino_Canvas *canvas, bool isConnected, String macAddr, bool highlight) {
     canvas->fillScreen(COL_BG_BLACK);
     
     uint16_t ledColor;
@@ -213,11 +213,18 @@ void renderStartScreen(Arduino_Canvas *canvas, bool isConnected, String macAddr)
 
     // Versions-Info hinzufügen
     canvas->setTextColor(COL_DIM_GRAY);
-    String verInfo = String(BUILD_VERSION) + " (" + String(BUILD_COMMIT) + ")";
+    String verInfo = String(FW_VERSION) + " (" + String(BUILD_COMMIT) + ")";
     int16_t vx, vy; uint16_t vw, vh;
     canvas->getTextBounds(verInfo.c_str(), 0, 0, &vx, &vy, &vw, &vh);
-    canvas->setCursor(120 - (vw / 2), 160);
+    int16_t cursorX = 120 - (vw / 2);
+    int16_t cursorY = 160;
+    canvas->setCursor(cursorX, cursorY);
     canvas->print(verInfo);
+
+    // NEU: Rahmen zeichnen, wenn highlight aktiv
+    if (highlight) {
+        drawSelectionBorder(canvas, cursorX, cursorY - vh, vw, vh, COL_MAIN_WHITE);
+    }
 
     canvas->setTextColor(COL_MAIN_WHITE); 
     canvas->setCursor(40, 200); 

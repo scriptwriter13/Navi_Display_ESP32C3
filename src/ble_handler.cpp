@@ -12,7 +12,7 @@
 // Zugriff auf globale Variablen der main.cpp
 extern String displayText, streetNumber, nextStreet, pointNumber;
 extern float currentDist, startDist, nextDist, angleExtraDist, lastKmh, currentHeading;
-extern unsigned long arrivalTime, lastSpdTime, lastPktTime, lastCalcTime, lastPreviewUpdateTime;
+extern unsigned long arrivalTime, lastSpdTime, lastPktTime, lastCalcTime, lastPreviewUpdateTime, powerTimer;
 extern bool isConnected, isReverse, actionActive, previewPendingClear;
 extern bool isFlashing;
 extern int navIcon, turnMod, nextNavIcon, nextTurnMod, spdWaitCount;
@@ -42,9 +42,13 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
         // Golden Rule 1: Rohdaten immer ausgeben
         Serial.print(">>> RX-RAW: "); Serial.println(rawValue);
         
-        // Reboot-Logik (falls Nachricht über UART kommt)
-        if (rawValue.indexOf("OTA Übertragung abgeschlossen") >= 0) {
-            Serial.println(">>> [SYSTEM]: OTA Abschluss erkannt, starte neu...");
+        // Reboot-Logik (Fallback: Falls App den Befehl an UART statt OTA sendet)
+        String checkReboot = rawValue;
+        checkReboot.toLowerCase();
+        checkReboot.trim();
+        if (checkReboot.indexOf("abgeschlossen") >= 0 || checkReboot == "reboot") {
+            Serial.println(">>> [SYSTEM]: OTA Abschluss via UART erkannt, starte neu...");
+            isFlashing = false;
             delay(500);
             ESP.restart();
         }
@@ -63,8 +67,10 @@ class MyCharCallbacks: public BLECharacteristicCallbacks {
 
         // NEU: Expliziter Keep-Alive Handler
         if (lowRaw == "stt:alive") {
+            lastPktTime = millis(); // Watchdog zurücksetzen
+            powerTimer = millis();  // Display-Timeout zurücksetzen
             Serial.println(">>> [BLE]: Keep-Alive empfangen");
-            return; // Timer wurde bereits durch wakeup() oben zurückgesetzt
+            return; 
         }
         
         // NEU: Auf Anfrage der App antworten
@@ -222,6 +228,11 @@ class MyServerCallbacks: public BLEServerCallbacks {
         wakeup(); 
         Serial.println(">>> [BLE]: Verbunden!"); 
     }
+
+    void onMtuChange(BLEServer* pS, uint16_t mtu) {
+        Serial.printf(">>> [BLE]: MTU ausgehandelt auf: %d Bytes\n", mtu);
+    }
+
     void onDisconnect(BLEServer* pS) { 
         isConnected = false; 
         // Wir starten das Advertising hier neu, falls die App sauber trennt.
@@ -234,27 +245,43 @@ class MyServerCallbacks: public BLEServerCallbacks {
 
 class MyOTACallbacks: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pChar) {
-        String value = String(pChar->getValue().c_str());
-        Serial.print(">>> [OTA-RX]: "); Serial.println(value);
+        // WICHTIG: Watchdog und Display-Timer zurücksetzen
+        lastPktTime = millis(); 
+        powerTimer = millis();
         
-        if (value.startsWith("START:")) {
-            isFlashing = true;
-            pChar->setValue("READY");
-            pChar->notify();
-            Serial.println(">>> [OTA-TX]: READY gesendet, Flash-Modus AN");
-        }
-        // Reboot-Logik bei Abschluss
-        else if (value.indexOf("abgeschlossen") >= 0) {
-            isFlashing = false;
-            Serial.println(">>> [OTA]: Übertragung fertig, starte neu...");
-            delay(500);
-            ESP.restart();
+        std::string rawValue = pChar->getValue();
+        
+        // Nur parsen, wenn es ein kurzer Befehl ist (Firmware-Daten sind lang)
+        if (rawValue.length() < 50) {
+            String value = String(rawValue.c_str());
+            Serial.print(">>> [OTA-CMD]: '"); Serial.print(value); Serial.println("'");
+            
+            value.trim();
+            value.toLowerCase();
+            
+            if (value.startsWith("start:")) {
+                isFlashing = true;
+                pChar->setValue("READY");
+                pChar->notify();
+                Serial.println(">>> [OTA-TX]: READY gesendet, Flash-Modus AN");
+            }
+            else if (value.indexOf("abgeschlossen") >= 0 || value == "reboot") {
+                isFlashing = false;
+                Serial.println(">>> [OTA]: Übertragung fertig, starte neu...");
+                delay(500);
+                ESP.restart();
+            }
+        } else {
+            // Es sind Firmware-Daten, nicht parsen, nur kurz loggen
+            Serial.printf(">>> [OTA-DATA]: %d Bytes empfangen\n", rawValue.length());
         }
     }
 };
 
 void setupBLE(const char* deviceName) {
     BLEDevice::init(deviceName);
+    BLEDevice::setMTU(512);
+    
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
     

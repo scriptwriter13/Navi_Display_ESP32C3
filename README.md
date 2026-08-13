@@ -51,27 +51,27 @@ Das Herzstück des Systems ist die Kopplung mit der **Android Bridge App** [TTS2
    - Die `platformio.ini` konfiguriert automatisch die notwendigen Bibliotheken (`GFX Library`, `NimBLE`, `CST816S`).
 3. **Überwachung**: Öffne den Serial Monitor (Baudrate: 115200), um den Boot-Vorgang und BLE-Status zu sehen.
 
+### Alternative Installationsmethoden (ohne PlatformIO)
+Falls du PlatformIO nicht nutzen möchtest, kannst du die kompilierte `.bin`-Datei direkt flashen:
+
+#### 1. ESP32 Download Tool (Windows)
+1. Lade das [Flash Download Tool](https://www.espressif.com/en/support/download/other-tools) von Espressif herunter.
+2. Wähle "ESP32" als Chip-Typ.
+3. Wähle die `.bin`-Datei aus.
+4. Setze die Flash-Adresse auf `0x10000`.
+5. Wähle den COM-Port aus und klicke auf **START**.
+
+#### 2. esptool.py (Kommandozeile)
+1. Installiere esptool: `pip install esptool`
+2. Führe folgenden Befehl aus (ersetze `COMx` durch deinen Port):
+   ```bash
+   esptool.py --chip esp32 --port COMx --baud 460800 write_flash -z 0x10000 pfad/zu/datei.bin
+   ```
+
+*Hinweis: Falls das Gerät nicht automatisch in den Flash-Modus wechselt, halte die `BOOT`-Taste gedrückt, drücke kurz `RESET` und lasse `BOOT` wieder los.*
+
 ### Koppeln
 1. Starte die Android Bridge App.
 2. Suche nach "BikeNav_C3".
 3. Sobald verbunden, zeigt das Display den Navigations-Screen.
 
-## ⚙️ Technische Funktionsweise
-
-*Letzte Aktualisierung: 2023-10-27*
-
-Das System folgt einem ereignisgesteuerten Datenfluss:
-
-1. **BLE-Kommunikation**:
-   - Das Gerät fungiert als BLE-Server.
-   - Eingehende Nachrichten werden über den `NimBLE`-Stack empfangen.
-   - **Wichtig**: Gemäß der *Verbosity Rule* wird jede empfangene Nachricht zur Diagnose im Serial Monitor ausgegeben.
-
-2. **Datenverarbeitung**:
-   - Die empfangenen Strings werden geparst (siehe `src/logic.cpp`), um Icons, Distanzen und Straßennamen zu extrahieren.
-   - Die `SPD-CALC` Logik berechnet bei fehlenden Daten die Distanz basierend auf der letzten bekannten Geschwindigkeit.
-
-3. **Rendering**:
-   - Das UI wird über die `GFX Library` auf dem GC9A01 Display gerendert.
-   - `renderStartScreen()`: Zeigt den Verbindungsstatus (Blau = Verbunden, Rot = Getrennt).
-   - `renderNavScreen()`: Aktualisiert dynamisch die Navigationsanweisungen.

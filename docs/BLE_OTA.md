@@ -21,8 +21,8 @@ Die App muss sich mit dem ESP32 verbinden und den folgenden Service sowie die Ch
 Das Protokoll ist zustandsbasiert und erfordert eine Autorisierung.                                                                       
                                                                                                                                           
 ### Schritt A: Autorisierung & Hardware-Check
-1. **Hardware-Version abfragen:** Sende `get_hw` an die UART-Characteristic (`6E400002...`). Das Device antwortet mit `HW:ESP32-2424S012-V1.0`.
-2. **Firmware-Version abfragen:** Sende `get_fw` an die UART-Characteristic (`6E400002...`). Das Device antwortet mit `FW:1.1.1` (entsprechend der in der `platformio.ini` definierten Version).
+1. **Hardware-Version abfragen:** Sende `get_hw` an die UART-Characteristic (`6E400002...`). Das Device antwortet mit `HW:ESP32-2424S012-V1.0` (entsprechend der in `include/git_version.h` definierten Version).
+2. **Firmware-Version abfragen:** Sende `get_fw` an die UART-Characteristic (`6E400002...`). Das Device antwortet mit `FW:1.1.1` (entsprechend der in `include/fw_version.h` definierten Version).
 3. **OTA Initialisieren:** Sende an die OTA-Characteristic: `"START:" + OTA_SECRET_KEY`
    *(Der `OTA_SECRET_KEY` ist in `include/config.h` definiert).*
                                                                                                                                           
@@ -33,10 +33,10 @@ Nach erfolgreicher Autorisierung können die Binärdaten der Firmware übertrage
 *   **Format:** Binäre Datenpakete (Chunks).                                                                                              
 *   **Schreib-Modus:** Verwende `WRITE_NO_RESPONSE`.                             
                                                                                                                                           
-### Schritt C: Abschluss                                                                                                                  
-Nachdem alle Daten übertragen wurden, sende den String:                                                                                   
-`"OTA Übertragung abgeschlossen"`                                                                                                                                   
-Der ESP32 wird daraufhin das Update validieren und automatisch neu starten.                                                               
+### Schritt C: Abschluss
+Nachdem alle Daten übertragen wurden, sende den String:
+"OTA Übertragung abgeschlossen"
+Der ESP32 wird daraufhin das Update validieren und automatisch neu starten.
                                                                                                                                           
 ## 3. Visuelles Feedback (Orange Flash Mode)
 Während der OTA-Übertragung wechselt das Display-Lämpchen in den **Orange Flash Mode** (oranges Blinken). Dies signalisiert dem Nutzer, dass das Gerät aktiv geflasht wird und nicht unterbrochen werden darf.

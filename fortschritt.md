@@ -36,3 +36,29 @@
 - [x] Refactoring: FW_VERSION in include/fw_version.h ausgelagert und Build-Flag entfernt
 - [x] Fix: upload_port in platformio.ini konfiguriert
 - [x] Anpassung BLE Advertising Intervall auf 2s
+- [x] Dokumentation: Hinweis auf automatische Versions-Header in BLE_OTA.md
+- [x] Fix: Anzeige der korrekten Firmware-Version (FW_VERSION) auf dem Startbildschirm
+- [x] UI: Visuelles Feedback (Rahmen) bei Auswahl implementiert
+- [x] UI: Logik für Firmware-Auswahl per Touch-Tap implementiert
+- [x] Dokumentation: Flash-Methoden (ESP32 Download Tool, esptool) in README.md ergänzt
+- [x] Implementierung: UART Wakeup für Debugging
+- [x] Implementierung: Automatische Debug-Erkennung via usb_serial_jtag_is_connected()
+- [x] Implementierung: Manuelle Debug-Steuerung via `debugMode` Flag
+- [x] Fix: Keep-Alive Handler aktualisiert Watchdog und Display-Timer
+- [x] Fix: powerTimer extern Deklaration in ble_handler.cpp
+- [x] Git Bisect: OTA-Regression eingrenzen
+- [x] Untersuchung: OTA-Stabilität auf master-Branch
+- [x] Fix: Entfernung der xxd-Abhängigkeit in scripts/bleupload.sh
+- [x] Implementierung: Test-Skript für BLE-Upload (scripts/bleupload.sh)
+- [x] Fix: gatttool UUID usage in scripts/bleupload.sh
+- [x] Fix: gatttool send_cmd auf --char-write-cmd umgestellt (verhindert Hängenbleiben)
+- [x] Fix: Korrektur der UART-Write-Characteristic auf 6E400003 (NUS Standard)
+- [x] Fix: gatttool auf interaktiven Modus umgestellt (löst "Unknown option" Fehler)
+- [x] Implementierung: Automatische Handle-Auflösung für UUIDs
+- [x] Fix: Timeout-Schutz für Handle-Auflösung in scripts/bleupload.sh
+- [x] Fix: OTA Reboot-Trigger robuster gemacht (Trim/Lowercase/Fallback)
+- [x] Debug: Logging für OTA-Empfang erweitert (Raw-Output)
+- [x] Fix: OTA-Parser ignoriert nun binäre Firmware-Daten (Längenprüfung)
+- [x] Fix: OTA-Reboot-Befehl wird nun auch über UART-Characteristic akzeptiert (Fallback)
+- [x] Fix: BLE-Watchdog Timeout während OTA auf 60s erhöht (verhindert vorzeitigen Abbruch)
+- [x] Implementierung: 10s Timeout für OTA-Abbruch (Auto-Exit Flash-Modus)
