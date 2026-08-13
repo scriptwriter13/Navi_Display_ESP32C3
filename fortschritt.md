@@ -62,3 +62,4 @@
 - [x] Fix: OTA-Reboot-Befehl wird nun auch über UART-Characteristic akzeptiert (Fallback)
 - [x] Fix: BLE-Watchdog Timeout während OTA auf 60s erhöht (verhindert vorzeitigen Abbruch)
 - [x] Implementierung: 10s Timeout für OTA-Abbruch (Auto-Exit Flash-Modus)
+- [x] Fix: OTA-Implementierung (Update-Bibliothek in ble_handler.cpp integriert)
