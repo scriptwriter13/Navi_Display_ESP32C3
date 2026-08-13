@@ -245,6 +245,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
 };
 
 class MyOTACallbacks: public BLECharacteristicCallbacks {
+    size_t totalBytes = 0;
     void onWrite(BLECharacteristic *pChar) {
         lastPktTime = millis(); 
         powerTimer = millis();
@@ -263,6 +264,7 @@ class MyOTACallbacks: public BLECharacteristicCallbacks {
                 // Update initialisieren
                 if (Update.begin(UPDATE_SIZE_UNKNOWN, U_FLASH)) {
                     isFlashing = true;
+                    totalBytes = 0;
                     pChar->setValue("READY");
                     pChar->notify();
                     Serial.println(">>> [OTA]: Update begonnen.");
@@ -274,14 +276,31 @@ class MyOTACallbacks: public BLECharacteristicCallbacks {
             }
             else if (value.indexOf("abgeschlossen") >= 0 || value == "reboot") {
                 if (isFlashing) {
+                    // Sicherheitscheck: Ist die Firmware zu klein? (Mindestgröße 1MB)
+                    if (totalBytes < 1000000) {
+                        Serial.printf(">>> [OTA]: FEHLER: Update zu klein (%d bytes)! Abbruch.\n", totalBytes);
+                        pChar->setValue("OTA_FAIL");
+                        pChar->notify();
+                        Update.abort();
+                        isFlashing = false;
+                        return;
+                    }
+
                     isFlashing = false;
-                    Serial.println(">>> [OTA]: Finalisiere Update...");
+                    Serial.printf(">>> [OTA]: Finalisiere Update (%d bytes)...\n", totalBytes);
+                    
+                    delay(500); 
+                    
                     if (Update.end(true)) { 
-                        Serial.println(">>> [OTA]: Erfolg! Neustart...");
-                        delay(500);
+                        Serial.println(">>> [OTA]: Erfolg! Sende Bestätigung...");
+                        pChar->setValue("OTA_SUCCESS");
+                        pChar->notify();
+                        delay(1000); // Warten, damit Nachricht rausgeht
                         ESP.restart();
                     } else {
                         Serial.println(">>> [OTA]: FEHLER beim Finalisieren!");
+                        pChar->setValue("OTA_FAIL");
+                        pChar->notify();
                         Update.printError(Serial);
                     }
                 }
@@ -303,7 +322,8 @@ class MyOTACallbacks: public BLECharacteristicCallbacks {
                         isFlashing = false;
                         Update.abort();
                     } else {
-                        Serial.printf(">>> [OTA-DATA]: %d Bytes geschrieben\n", rawValue.length());
+                        totalBytes += written;
+                        Serial.printf(">>> [OTA-DATA]: %d Bytes geschrieben (Total: %d)\n", rawValue.length(), totalBytes);
                     }
                 }
             } else {

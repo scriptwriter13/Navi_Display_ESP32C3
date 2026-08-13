@@ -64,3 +64,5 @@
 - [x] Implementierung: 10s Timeout für OTA-Abbruch (Auto-Exit Flash-Modus)
 - [x] Fix: OTA-Implementierung (Update-Bibliothek in ble_handler.cpp integriert)
 - [x] Fix: OTA-Robustheit (Abort-Fehler bei Update.write behoben)
+- [x] Implementierung: Sicherheits-Check für OTA-Firmware-Mindestgröße (500KB) und Logging
+- [x] Implementierung: OTA-Handshake (OTA_SUCCESS/OTA_FAIL Bestätigung)

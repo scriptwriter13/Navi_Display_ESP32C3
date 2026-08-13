@@ -37,6 +37,8 @@ Nach erfolgreicher Autorisierung können die Binärdaten der Firmware übertrage
 Nachdem alle Daten übertragen wurden, sende den String:
 "OTA Übertragung abgeschlossen"
 Der ESP32 wird daraufhin das Update validieren und automatisch neu starten.
+
+**WICHTIG:** Sende diesen Befehl erst, wenn **alle** Datenpakete vollständig übertragen wurden. Ein zu frühes Senden führt zu einem Abbruch der Validierung (Checksum-Fehler).
                                                                                                                                           
 ## 3. Visuelles Feedback (Orange Flash Mode)
 Während der OTA-Übertragung wechselt das Display-Lämpchen in den **Orange Flash Mode** (oranges Blinken). Dies signalisiert dem Nutzer, dass das Gerät aktiv geflasht wird und nicht unterbrochen werden darf.
