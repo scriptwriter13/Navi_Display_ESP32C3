@@ -3,6 +3,7 @@
 // DATE: 2026-03-29
 // CHANGE: OTA-Service, Hardware-Version Abfrage (get_hw) und orangen Flash-Modus implementiert.
 
+#include <Update.h>
 #include "ble_handler.h"
 #include "logic.h"
 #include "graphics.h"
@@ -245,35 +246,69 @@ class MyServerCallbacks: public BLEServerCallbacks {
 
 class MyOTACallbacks: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pChar) {
-        // WICHTIG: Watchdog und Display-Timer zurücksetzen
         lastPktTime = millis(); 
         powerTimer = millis();
         
         std::string rawValue = pChar->getValue();
         
-        // Nur parsen, wenn es ein kurzer Befehl ist (Firmware-Daten sind lang)
+        // 1. Befehle (kurz)
         if (rawValue.length() < 50) {
             String value = String(rawValue.c_str());
-            Serial.print(">>> [OTA-CMD]: '"); Serial.print(value); Serial.println("'");
-            
-            value.trim();
-            value.toLowerCase();
+            value.trim(); value.toLowerCase();
             
             if (value.startsWith("start:")) {
-                isFlashing = true;
-                pChar->setValue("READY");
-                pChar->notify();
-                Serial.println(">>> [OTA-TX]: READY gesendet, Flash-Modus AN");
+                // Vorheriges Update abbrechen, falls noch eines offen ist
+                Update.abort(); 
+                
+                // Update initialisieren
+                if (Update.begin(UPDATE_SIZE_UNKNOWN, U_FLASH)) {
+                    isFlashing = true;
+                    pChar->setValue("READY");
+                    pChar->notify();
+                    Serial.println(">>> [OTA]: Update begonnen.");
+                } else {
+                    isFlashing = false;
+                    Serial.println(">>> [OTA]: FEHLER: Update.begin() fehlgeschlagen!");
+                    Update.printError(Serial);
+                }
             }
             else if (value.indexOf("abgeschlossen") >= 0 || value == "reboot") {
-                isFlashing = false;
-                Serial.println(">>> [OTA]: Übertragung fertig, starte neu...");
-                delay(500);
-                ESP.restart();
+                if (isFlashing) {
+                    isFlashing = false;
+                    Serial.println(">>> [OTA]: Finalisiere Update...");
+                    if (Update.end(true)) { 
+                        Serial.println(">>> [OTA]: Erfolg! Neustart...");
+                        delay(500);
+                        ESP.restart();
+                    } else {
+                        Serial.println(">>> [OTA]: FEHLER beim Finalisieren!");
+                        Update.printError(Serial);
+                    }
+                }
             }
-        } else {
-            // Es sind Firmware-Daten, nicht parsen, nur kurz loggen
-            Serial.printf(">>> [OTA-DATA]: %d Bytes empfangen\n", rawValue.length());
+        } 
+        // 2. Daten-Chunks (lang)
+        else {
+            // Nur schreiben, wenn wir wirklich im Flash-Modus sind
+            if (isFlashing) {
+                // Sicherstellen, dass wir gültige Daten haben
+                if (rawValue.length() > 0) {
+                    // Wir schreiben die Daten direkt. 
+                    // WICHTIG: Wir nutzen rawValue.data() direkt.
+                    size_t written = Update.write((uint8_t*)rawValue.data(), rawValue.length());
+                    
+                    if (written != rawValue.length()) {
+                        Serial.printf(">>> [OTA]: FEHLER: Nur %d/%d Bytes geschrieben!\n", written, rawValue.length());
+                        Update.printError(Serial);
+                        isFlashing = false;
+                        Update.abort();
+                    } else {
+                        Serial.printf(">>> [OTA-DATA]: %d Bytes geschrieben\n", rawValue.length());
+                    }
+                }
+            } else {
+                Serial.println(">>> [OTA]: Daten empfangen, aber kein Update aktiv!");
+            }
         }
     }
 };
