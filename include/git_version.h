@@ -1,2 +1,2 @@
 #define BUILD_VERSION "v1.0.0"
-#define BUILD_COMMIT "da26893"
+#define BUILD_COMMIT "aa1b3ef"

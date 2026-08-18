@@ -1,5 +1,5 @@
 {
-  "name": "Mein ESP32 Projekt",
+  "name": "Navi_Display_ESP32C3",
   "builds": [
     {
       "chipFamily": "ESP32-C3",
