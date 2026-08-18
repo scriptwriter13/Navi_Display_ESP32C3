@@ -6,11 +6,11 @@
       "description": "Variante A: Standard Board (ohne Display)",
       "parts": [
         { 
-          "path": "https://github.com/DeinBenutzername/DeinRepo/releases/download/v1.0.0/bootloader.bin", 
+          "path": "https://github.com/scriptwriter13/Navi_Display_ESP32C3/releases/latest/download/bootloader_1.1.3_ESP32-2424S012.bin", 
           "offset": 0 
         },
         { 
-          "path": "https://github.com/DeinBenutzername/DeinRepo/releases/download/v1.0.0/partition-table.bin", 
+          "path": "https://github.com/scriptwriter13/Navi_Display_ESP32C3/releases/latest/download/partition-table_1.1.3_ESP32-2424S012.bin", 
           "offset": 32768 
         },
         { 
