@@ -33,6 +33,7 @@
 - [x] Fix: Bereinigung und Korrektur von scripts/get_git_revision.py
 - [x] Implementierung: Expliziter "DISCONNECT" Befehl für sauberes Advertising-Reset
 - [x] Optimierung: BLE-Watchdog Timeout auf 15s reduziert (App-Alive: 10s)
+- [x] Implementierung: Fast Advertising (60s nach Disconnect)
 - [x] Refactoring: FW_VERSION in include/fw_version.h ausgelagert und Build-Flag entfernt
 - [x] Fix: upload_port in platformio.ini konfiguriert
 - [x] Anpassung BLE Advertising Intervall auf 2s
@@ -48,6 +49,7 @@
 - [x] Fix: powerTimer extern Deklaration in ble_handler.cpp
 - [x] Git Bisect: OTA-Regression eingrenzen
 - [x] Untersuchung: OTA-Stabilität auf master-Branch
+- [x] Refactoring: UI-Layout-Konstanten in layout_config.h auslagern
 - [x] Fix: Entfernung der xxd-Abhängigkeit in scripts/bleupload.sh
 - [x] Implementierung: Test-Skript für BLE-Upload (scripts/bleupload.sh)
 - [x] Fix: gatttool UUID usage in scripts/bleupload.sh
@@ -66,3 +68,4 @@
 - [x] Fix: OTA-Robustheit (Abort-Fehler bei Update.write behoben)
 - [x] Implementierung: Sicherheits-Check für OTA-Firmware-Mindestgröße (500KB) und Logging
 - [x] Implementierung: OTA-Handshake (OTA_SUCCESS/OTA_FAIL Bestätigung)
+- [x] Fix: Heading-Punkt nur bei aktiver PFX-Route anzeigen

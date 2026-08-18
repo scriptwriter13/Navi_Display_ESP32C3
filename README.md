@@ -65,7 +65,7 @@ Falls du PlatformIO nicht nutzen möchtest, kannst du die kompilierte `.bin`-Dat
 1. Installiere esptool: `pip install esptool`
 2. Führe folgenden Befehl aus (ersetze `COMx` durch deinen Port):
    ```bash
-   esptool.py --chip esp32 --port COMx --baud 460800 write_flash -z 0x10000 pfad/zu/datei.bin
+      esptool.py --chip esp32c3 --port COMx --baud 460800 write_flash -z 0x0 bootloader.bin 0x8000 partition-table.bin 0x10000 firmware.bin
    ```
 
 *Hinweis: Falls das Gerät nicht automatisch in den Flash-Modus wechselt, halte die `BOOT`-Taste gedrückt, drücke kurz `RESET` und lasse `BOOT` wieder los.*

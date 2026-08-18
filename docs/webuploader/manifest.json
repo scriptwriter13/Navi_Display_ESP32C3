@@ -1,0 +1,23 @@
+{
+  "name": "Mein ESP32 Projekt",
+  "builds": [
+    {
+      "chipFamily": "ESP32-C3",
+      "description": "Variante A: Standard Board (ohne Display)",
+      "parts": [
+        { 
+          "path": "https://github.com/DeinBenutzername/DeinRepo/releases/download/v1.0.0/bootloader.bin", 
+          "offset": 0 
+        },
+        { 
+          "path": "https://github.com/DeinBenutzername/DeinRepo/releases/download/v1.0.0/partition-table.bin", 
+          "offset": 32768 
+        },
+        { 
+          "path": "https://github.com/DeinBenutzername/DeinRepo/releases/download/v1.0.0/firmware.bin", 
+          "offset": 65536 
+        }
+      ]
+    }
+  ]
+}

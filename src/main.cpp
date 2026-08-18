@@ -36,6 +36,8 @@
 #include "ble_handler.h"
 
 // --- GLOBALE VARIABLEN ---
+unsigned long fastAdvStartTime = 0;
+bool isFastAdvertising = false;
 String displayText = "warte auf App", macAddr = "", streetNumber = "";
 String pointNumber = ""; 
 String nextStreet = ""; 
@@ -138,6 +140,13 @@ void setup() {
 
 void loop() {
     unsigned long now = millis();
+
+    // Fast-to-Slow Advertising Switch (nach 60s)
+    if (isFastAdvertising && (now - fastAdvStartTime > 60000)) {
+        Serial.println(">>> [BLE]: Fast Advertising Timeout - Wechsle zu Slow Mode.");
+        setAdvertisingInterval(1600); // 1000ms
+        isFastAdvertising = false;
+    }
 
     // 0. BLE Watchdog: Wenn 15s keine Daten, erzwinge Reset (während OTA 60s)
     unsigned long timeout = isFlashing ? 60000 : 15000;

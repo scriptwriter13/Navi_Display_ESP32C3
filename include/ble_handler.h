@@ -25,6 +25,7 @@
 
 void setupBLE(const char* deviceName);
 void restartAdvertising();
+void setAdvertisingInterval(uint16_t interval);
 String getBLEAddress();
 
 #endif

@@ -248,15 +248,16 @@ void renderNavScreen(Arduino_Canvas *canvas, int navIcon, int turnMod, float cur
     }
     canvas->fillCircle(LED_X, LED_Y, LED_R, ledColor);
     
-    canvas->drawCircle(120, 120, 117, COL_DIM_GRAY);
+    canvas->drawCircle(SCREEN_CENTER_X, SCREEN_CENTER_Y, NAV_CIRCLE_RADIUS, COL_DIM_GRAY);
 
     // Heading-Punkt Logik
-    if (lastPktTime > 0 && (now - lastPktTime < 45000)) {
+    // Zeige den Heading-Punkt nur, wenn Daten aktuell sind UND eine PFX-Route aktiv ist
+    if (lastPktTime > 0 && (now - lastPktTime < 45000) && (pointNumber.length() > 0 && pointNumber != "0")) {
         float absHeading = abs(currentHeading); 
         uint16_t pktColor = (absHeading < 5.0f) ? COL_ACCENT_GREEN : (absHeading < 25.0f ? COL_ALERT_ORANGE : 0xF800);
         float radH = (currentHeading - 90.0f) * 0.01745f;
-        int pktX = 120 + (int)(cos(radH) * 109.0f);
-        int pktY = 120 + (int)(sin(radH) * 109.0f);
+        int pktX = SCREEN_CENTER_X + (int)(cos(radH) * HEADING_DOT_OFFSET);
+        int pktY = SCREEN_CENTER_Y + (int)(sin(radH) * HEADING_DOT_OFFSET);
         
         if (absHeading <= 15.0f || ((now / 250) % 2 == 0)) {
             canvas->fillCircle(pktX, pktY, 12, COL_BG_BLACK);
@@ -275,10 +276,10 @@ void renderNavScreen(Arduino_Canvas *canvas, int navIcon, int turnMod, float cur
         
         // Progress Ring
         if (isAlert) {
-            if ((now / 400) % 2 == 0) { for(int i=0; i<360; i+=3) { float r=(i-90)*0.01745f; canvas->fillCircle(120+cos(r)*116, 120+sin(r)*116, 4, COL_ALERT_ORANGE); } }
+            if ((now / 400) % 2 == 0) { for(int i=0; i<360; i+=3) { float r=(i-90)*0.01745f; canvas->fillCircle(SCREEN_CENTER_X+cos(r)*PROGRESS_RING_RADIUS, SCREEN_CENTER_Y+sin(r)*PROGRESS_RING_RADIUS, 4, COL_ALERT_ORANGE); } }
         } else if (startDist > 0) {
             int angle = (int)(min(1.0f, (startDist-currentDist)/startDist)*360.0f);
-            for(int i=0; i<angle; i+=3) { float r=(i-90)*0.01745f; canvas->fillCircle(120+cos(r)*116, 120+sin(r)*116, 4, COL_ACCENT_GREEN); }
+            for(int i=0; i<angle; i+=3) { float r=(i-90)*0.01745f; canvas->fillCircle(SCREEN_CENTER_X+cos(r)*PROGRESS_RING_RADIUS, SCREEN_CENTER_Y+sin(r)*PROGRESS_RING_RADIUS, 4, COL_ACCENT_GREEN); }
         }
 
         if (!displayText.startsWith("Route:")) {

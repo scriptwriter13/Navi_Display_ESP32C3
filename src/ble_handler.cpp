@@ -16,6 +16,8 @@ extern float currentDist, startDist, nextDist, angleExtraDist, lastKmh, currentH
 extern unsigned long arrivalTime, lastSpdTime, lastPktTime, lastCalcTime, lastPreviewUpdateTime, powerTimer;
 extern bool isConnected, isReverse, actionActive, previewPendingClear;
 extern bool isFlashing;
+extern bool isFastAdvertising;
+extern unsigned long fastAdvStartTime;
 extern int navIcon, turnMod, nextNavIcon, nextTurnMod, spdWaitCount;
 
 BLECharacteristic *pUARTChar = nullptr;
@@ -387,29 +389,34 @@ void setupBLE(const char* deviceName) {
     Serial.println(">>> [BLE]: Advertising mit expliziter Trennung gestartet.");
 }
 
-void restartAdvertising() {
-    Serial.println(">>> [BLE]: Force-Reset Advertising...");
-    
-    // 1. Advertising stoppen
+void setAdvertisingInterval(uint16_t interval) {
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
     pAdvertising->stop();
+    pAdvertising->setMinInterval(interval);
+    pAdvertising->setMaxInterval(interval);
+    pAdvertising->start();
+    Serial.printf(">>> [BLE]: Advertising Intervall auf %d (%.1f ms) gesetzt.\n", interval, interval * 0.625);
+}
 
-    // 2. Alle Verbindungen erzwingen zu trennen
+void restartAdvertising() {
+    Serial.println(">>> [BLE]: Force-Reset Advertising (Fast Mode)...");
+    
+    // 1. Alle Verbindungen erzwingen zu trennen
     if (pServer) {
-        // Korrektur: Argument 'true' für getPeerDevices hinzugefügt
         std::map<uint16_t, conn_status_t> peers = pServer->getPeerDevices(true);
-        
-        // Korrektur: Klassische Iterator-Schleife statt C++17 Structured Bindings
         for (auto const& pair : peers) {
             pServer->disconnect(pair.first);
         }
     }
 
-    // 3. Advertising neu starten
-    pAdvertising->setMinInterval(3200);
-    pAdvertising->setMaxInterval(3200);
-    pAdvertising->start();
-    Serial.println(">>> [BLE]: Advertising neu gestartet.");
+    // 2. Fast Advertising starten (160 = 100ms)
+    setAdvertisingInterval(160);
+    
+    // 3. Status setzen
+    isFastAdvertising = true;
+    fastAdvStartTime = millis();
+    
+    Serial.println(">>> [BLE]: Advertising neu gestartet (Fast).");
 }
 
 String getBLEAddress() { return BLEDevice::getAddress().toString().c_str(); }

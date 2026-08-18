@@ -68,4 +68,17 @@ const int LED_X           = 120;
 const int LED_Y           = 20;
 const int LED_R           = 6;
 
+// --- SCREEN LAYOUT ---
+#define SCREEN_CENTER_X 120
+#define SCREEN_CENTER_Y 120
+
+// --- NAV CIRCLE ---
+#define NAV_CIRCLE_RADIUS 117
+
+// --- HEADING DOT ---
+#define HEADING_DOT_OFFSET 109
+
+// --- PROGRESS RING ---
+#define PROGRESS_RING_RADIUS 116
+
 #endif
