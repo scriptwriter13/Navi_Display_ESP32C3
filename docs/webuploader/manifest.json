@@ -3,7 +3,7 @@
   "builds": [
     {
       "chipFamily": "ESP32-C3",
-      "description": "Variante A: Standard Board (ohne Display)",
+      "description": "Variante A: Board ESP32-2424S012",
       "parts": [
         { 
           "path": "files/bootloader_1.1.3_ESP32-2424S012.bin", 
@@ -18,6 +18,28 @@
           "offset": 65536 
         }
       ]
+    },
+
+    {
+      "chipFamily": "ESP32-C3",
+      "description": "Variante A: Standard Board (ohne Display)",
+      "parts": [
+        {
+          "path": "files/bootloader_1.1.3_ESP32-2424S012.bin",
+          "offset": 0
+        },
+        {
+          "path": "files/partitions_1.1.3_ESP32-2424S012.bin",
+          "offset": 32768
+        },
+        {
+          "path": "files/firmware_1.1.3_ESP32-2424S012.bin",
+          "offset": 65536
+        }
+      ]
     }
+
+
+
   ]
 }
