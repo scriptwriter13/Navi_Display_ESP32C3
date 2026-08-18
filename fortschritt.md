@@ -69,3 +69,4 @@
 - [x] Implementierung: Sicherheits-Check für OTA-Firmware-Mindestgröße (500KB) und Logging
 - [x] Implementierung: OTA-Handshake (OTA_SUCCESS/OTA_FAIL Bestätigung)
 - [x] Fix: Heading-Punkt nur bei aktiver PFX-Route anzeigen
+- [ ] Erweiterung des Deployment-Skripts um Bootloader- und Partition-Binaries
