@@ -81,3 +81,4 @@
 - [ ] Hinweis auf Navigations-Apps in docs/index.html hinzugefügt
 - [ ] Hinweis auf Sturz-Sicherheit in docs/index.html hinzugefügt
 - [x] Implementierung Sprachumschaltung (DE/EN) für index.html und webuploader/index.html
+- [x] Umbenennung des Projektnamens in docs/index.html und docs/webuploader/index.html
