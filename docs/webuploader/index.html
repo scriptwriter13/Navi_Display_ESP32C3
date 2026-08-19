@@ -2,59 +2,34 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32 Firmware Flasher</title>
-    
-    <!-- Das ESP Web Tools Modul von unpkg -->
-    <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js"></script>
-    
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            text-align: center;
-            padding: 50px 20px;
-            background-color: #f4f4f9;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 { color: #333; }
-        p { color: #666; margin-bottom: 30px; }
-        
-        /* Design für den Button */
-        esp-web-install-button {
-            display: block;
-            margin-top: 20px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover { background-color: #0056b3; }
-    </style>
+    <title>Navi Display Installer</title>
+    <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
 </head>
 <body>
+    <div style="text-align: center; margin-top: 50px;">
+        <h1>Navi Display Firmware Installer</h1>
 
-    <div class="container">
-        <h1>Firmware Installation</h1>
-        <p>Verbinde dein ESP32-Board per USB mit dem PC und klicke auf den Button, um den Flash-Vorgang zu starten.</p>
+        <!-- Variante 1: Zeigt auf den Display-Ordner -->
+        <div style="margin: 20px;">
+            <h3>Display ESP32-2424S012</h3>
+            <esp-web-install-button manifest="./ESP32-2424S012/manifest.json">
+                <button slot="activate" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px;">
+                    Display-Version installieren
+                </button>
+            </esp-web-install-button>
+        </div>
 
-        <!-- Hier wird das Manifest eingebunden -->
-        <esp-web-install-button manifest="./manifest.json">
-            <button slot="activate">Firmware installieren</button>
-        </esp-web-install-button>
+        <hr style="width: 40%; margin: 30px auto;">
+
+        <!-- Variante 2: Zeigt auf den Standard-Ordner -->
+        <div style="margin: 20px;">
+            <h3>Variante B: Standard Board (Ohne Display)</h3>
+            <esp-web-install-button manifest="./standard/manifest.json">
+                <button slot="activate" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px;">
+                    Standard-Version installieren
+                </button>
+            </esp-web-install-button>
+        </div>
     </div>
-
 </body>
 </html>
