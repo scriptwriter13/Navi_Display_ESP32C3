@@ -74,3 +74,4 @@
 - [ ] Navigation: Links zwischen Dashboard und Web-Uploader sowie GitHub-Link hinzugefügt
 - [ ] Kopieren der Binaries in docs/webuploader/files/
 - [ ] Hinzufügen von Hardware-Bildern in docs/webuploader/index.html
+- [ ] Hinzufügen der Hardware-Empfehlung in docs/index.html
