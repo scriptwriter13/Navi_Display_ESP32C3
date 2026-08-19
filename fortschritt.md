@@ -70,5 +70,6 @@
 - [x] Implementierung: OTA-Handshake (OTA_SUCCESS/OTA_FAIL Bestätigung)
 - [x] Fix: Heading-Punkt nur bei aktiver PFX-Route anzeigen
 - [ ] Erweiterung des Deployment-Skripts um Bootloader- und Partition-Binaries
+- [x] Layout-Anpassung: Bild links, Button rechts in docs/webuploader/index.html
 - [ ] Kopieren der Binaries in docs/webuploader/files/
 - [ ] Hinzufügen von Hardware-Bildern in docs/webuploader/index.html
