@@ -88,6 +88,7 @@
 - [x] Implementierung Sprachumschaltung (DE/EN) für index.html und webuploader/index.html
 - [x] Umbenennung des Projektnamens in docs/index.html und docs/webuploader/index.html
 - [x] Umbenennung Web-Uploader zu Hardware-Auswahl in docs/webuploader/index.html
+- [x] UI: Piktogramme auf 60px vergrößert
 - [ ] SEO Meta-Tags um "Turn-by-Turn" und weitere Keywords in docs/index.html erweitert
 - [ ] Hinweis auf OTA-Updates in docs/index.html hinzugefügt
 - [ ] Aktualisierung Hardware-Preise in docs/index.html
