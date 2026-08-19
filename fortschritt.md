@@ -71,3 +71,4 @@
 - [x] Fix: Heading-Punkt nur bei aktiver PFX-Route anzeigen
 - [ ] Erweiterung des Deployment-Skripts um Bootloader- und Partition-Binaries
 - [ ] Kopieren der Binaries in docs/webuploader/files/
+- [ ] Hinzufügen von Hardware-Bildern in docs/webuploader/index.html
