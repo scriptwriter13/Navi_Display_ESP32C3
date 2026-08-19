@@ -78,7 +78,7 @@
 - [ ] Navigation: Links zwischen Dashboard und Web-Uploader sowie GitHub-Link hinzugefügt
 - [ ] Kopieren der Binaries in docs/webuploader/files/
 - [ ] Hinzufügen von Hardware-Bildern in docs/webuploader/index.html
-- [ ] Hinzufügen der Hardware-Empfehlung in docs/index.html
+- [x] Anpassung Hardware-Bezugsquellen-Text in docs/index.html
 - [ ] Hinweis auf TTS/Notifikations-Funktion in docs/index.html
 - [ ] Hinweis auf Android-App in docs/index.html hinzugefügt
 - [ ] Hinweis auf Android-App-Berechtigungen in docs/index.html hinzugefügt
@@ -87,6 +87,7 @@
 - [ ] Hinweis auf Hardware-Unterstützung (ESP32-C3 & ESP32-S3) in docs/index.html
 - [x] Implementierung Sprachumschaltung (DE/EN) für index.html und webuploader/index.html
 - [x] Umbenennung des Projektnamens in docs/index.html und docs/webuploader/index.html
+- [x] Umbenennung Web-Uploader zu Hardware-Auswahl in docs/webuploader/index.html
 - [ ] SEO Meta-Tags um "Turn-by-Turn" und weitere Keywords in docs/index.html erweitert
 - [ ] Hinweis auf OTA-Updates in docs/index.html hinzugefügt
 - [ ] Aktualisierung Hardware-Preise in docs/index.html
