@@ -66,5 +66,5 @@ footer { margin-top: 50px; font-size: 0.85rem; color: #555; }
 .lang-btn.active { border-color: var(--accent-green); color: var(--accent-green); }
 
 /* Sichtbarkeit steuern */
-body.lang-en .lang-de { display: none; }
-body.lang-de .lang-en { display: none; }
+.lang-en .lang-de { display: none; }
+.lang-de .lang-en { display: none; }

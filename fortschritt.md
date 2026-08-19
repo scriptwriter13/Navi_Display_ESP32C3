@@ -79,4 +79,4 @@
 - [ ] Hinweis auf Android-App-Berechtigungen in docs/index.html hinzugefügt
 - [ ] Hinweis auf Navigations-Apps in docs/index.html hinzugefügt
 - [ ] Hinweis auf Sturz-Sicherheit in docs/index.html hinzugefügt
-- [ ] Implementierung Sprachumschaltung (DE/EN) für index.html und webuploader/index.html
+- [x] Implementierung Sprachumschaltung (DE/EN) für index.html und webuploader/index.html

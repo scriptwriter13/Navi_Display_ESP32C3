@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../style.css">
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
 </head>
-<body>
+<body class="lang-de">
     <header>
         <!-- Sprachumschalter im Header -->
         <div class="lang-switcher">
@@ -77,7 +77,8 @@
 
     <script>
         function setLang(lang) {
-            document.body.className = 'lang-' + lang;
+            document.body.classList.remove('lang-de', 'lang-en');
+            document.body.classList.add('lang-' + lang);
             localStorage.setItem('lang', lang);
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('btn-' + lang).classList.add('active');
