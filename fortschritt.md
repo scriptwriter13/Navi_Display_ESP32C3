@@ -75,3 +75,4 @@
 - [ ] Kopieren der Binaries in docs/webuploader/files/
 - [ ] Hinzufügen von Hardware-Bildern in docs/webuploader/index.html
 - [ ] Hinzufügen der Hardware-Empfehlung in docs/index.html
+- [ ] Hinweis auf Android-App in docs/index.html hinzugefügt
