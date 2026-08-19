@@ -71,7 +71,7 @@
 - [x] Fix: Heading-Punkt nur bei aktiver PFX-Route anzeigen
 - [x] Hinweis auf einfache Installation (USB-Kabel) in docs/index.html
 - [x] Header-Bild in docs/index.html hinzugefügt
-- [ ] Hinweis auf 3-Schritte-Installation in docs/index.html
+- [x] Hinweis auf 3-Schritte-Installation in docs/index.html
 - [ ] Erweiterung des Deployment-Skripts um Bootloader- und Partition-Binaries
 - [x] Layout-Anpassung: Bild links, Button rechts in docs/webuploader/index.html
 - [ ] Hinzufügen des Android-GitHub-Links in docs/index.html
