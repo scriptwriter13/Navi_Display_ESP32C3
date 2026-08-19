@@ -76,3 +76,7 @@
 - [ ] Hinzufügen von Hardware-Bildern in docs/webuploader/index.html
 - [ ] Hinzufügen der Hardware-Empfehlung in docs/index.html
 - [ ] Hinweis auf Android-App in docs/index.html hinzugefügt
+- [ ] Hinweis auf Android-App-Berechtigungen in docs/index.html hinzugefügt
+- [ ] Hinweis auf Navigations-Apps in docs/index.html hinzugefügt
+- [ ] Hinweis auf Sturz-Sicherheit in docs/index.html hinzugefügt
+- [ ] Implementierung Sprachumschaltung (DE/EN) für index.html und webuploader/index.html

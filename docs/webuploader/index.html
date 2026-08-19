@@ -9,14 +9,32 @@
 </head>
 <body>
     <header>
-        <a href="../index.html" style="text-decoration: none; color: var(--text-dim); display: block; margin-bottom: 10px;">← Zurück zum Dashboard</a>
-        <h1>Web-Uploader</h1>
-        <p>Firmware direkt im Browser flashen.</p>
+        <!-- Sprachumschalter im Header -->
+        <div class="lang-switcher">
+            <button id="btn-de" class="lang-btn" onclick="setLang('de')">DE</button>
+            <button id="btn-en" class="lang-btn" onclick="setLang('en')">EN</button>
+        </div>
+
+        <a href="../index.html" style="text-decoration: none; color: var(--text-dim); display: block; margin-bottom: 10px;">
+            <span class="lang-de">← Zurück zum Dashboard</span>
+            <span class="lang-en">← Back to dashboard</span>
+        </a>
+        <h1>
+            <span class="lang-de">Web-Uploader</span>
+            <span class="lang-en">Web-Uploader</span>
+        </h1>
+        <p>
+            <span class="lang-de">Firmware direkt im Browser flashen.</span>
+            <span class="lang-en">Flash firmware directly in the browser.</span>
+        </p>
     </header>
 
     <main>
         <section>
-            <h2>Firmware-Auswahl</h2>
+            <h2>
+                <span class="lang-de">Firmware-Auswahl</span>
+                <span class="lang-en">Firmware selection</span>
+            </h2>
             
             <!-- Variante 1: Display ESP32-2424S012 -->
             <div style="display: flex; align-items: center; justify-content: center; gap: 30px; margin: 40px auto; max-width: 600px; text-align: left;">
@@ -24,7 +42,10 @@
                 <div>
                     <h3>Display ESP32-2424S012</h3>
                     <esp-web-install-button manifest="./ESP32-2424S012/manifest.json">
-                        <button slot="activate" class="btn">Display-Version installieren</button>
+                        <button slot="activate" class="btn">
+                            <span class="lang-de">Display-Version installieren</span>
+                            <span class="lang-en">Install display version</span>
+                        </button>
                     </esp-web-install-button>
                 </div>
             </div>
@@ -35,9 +56,15 @@
             <div style="display: flex; align-items: center; justify-content: center; gap: 30px; margin: 40px auto; max-width: 600px; text-align: left;">
                 <img src="./standard/standard_board.jpg" alt="Standard Board" style="max-width: 200px; border-radius: 8px;">
                 <div>
-                    <h3>Variante B: Standard Board</h3>
+                    <h3>
+                        <span class="lang-de">Variante B: Standard Board</span>
+                        <span class="lang-en">Variant B: Standard Board</span>
+                    </h3>
                     <esp-web-install-button manifest="./standard/manifest.json">
-                        <button slot="activate" class="btn">Standard-Version installieren</button>
+                        <button slot="activate" class="btn">
+                            <span class="lang-de">Standard-Version installieren</span>
+                            <span class="lang-en">Install standard version</span>
+                        </button>
                     </esp-web-install-button>
                 </div>
             </div>
@@ -47,5 +74,17 @@
     <footer>
         <p>&copy; 2026 scriptwriter13 | Lizenziert unter GPLv3</p>
     </footer>
+
+    <script>
+        function setLang(lang) {
+            document.body.className = 'lang-' + lang;
+            localStorage.setItem('lang', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + lang).classList.add('active');
+        }
+        // Initialisierung
+        const savedLang = localStorage.getItem('lang') || 'de';
+        setLang(savedLang);
+    </script>
 </body>
 </html>

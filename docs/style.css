@@ -59,3 +59,12 @@ section {
 .btn:hover { background: #fff; transform: translateY(-2px); }
 
 footer { margin-top: 50px; font-size: 0.85rem; color: #555; }
+
+/* Sprachumschaltung */
+.lang-switcher { margin: 20px 0; text-align: center; }
+.lang-btn { cursor: pointer; background: none; border: 1px solid var(--text-dim); color: var(--text-dim); padding: 5px 10px; border-radius: 4px; margin: 0 5px; }
+.lang-btn.active { border-color: var(--accent-green); color: var(--accent-green); }
+
+/* Sichtbarkeit steuern */
+body.lang-en .lang-de { display: none; }
+body.lang-de .lang-en { display: none; }

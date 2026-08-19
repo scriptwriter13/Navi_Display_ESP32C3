@@ -11,47 +11,149 @@
 </head>
 <body>
     <header>
+        <!-- Sprachumschalter im Header -->
+        <div class="lang-switcher">
+            <button id="btn-de" class="lang-btn" onclick="setLang('de')">DE</button>
+            <button id="btn-en" class="lang-btn" onclick="setLang('en')">EN</button>
+        </div>
+
         <!-- Pfad: docs/assets/logo.png -->
         <img src="assets/logo.png" alt="BikeNav_C3 Logo" class="hero-image">
-        <h1>BikeNav_C3</h1>
-        <p>Open Source Navigation für dein Cockpit.</p>
+        <h1>
+            <span class="lang-de">BikeNav_C3 | Dashboard</span>
+            <span class="lang-en">BikeNav_C3 | Dashboard</span>
+        </h1>
+        <p>
+            <span class="lang-de">Open Source Navigation für dein Cockpit.</span>
+            <span class="lang-en">Open Source Navigation for your cockpit.</span>
+        </p>
     </header>
 
     <main>
         <section>
-            <h2>Über das Projekt</h2>
-            <p>BikeNav_C3 ist ein hochoptimiertes Navigations-Display für Radfahrer. Minimalistisch, schnell und voll integriert.</p>
+            <h2>
+                <span class="lang-de">Über das Projekt</span>
+                <span class="lang-en">About the project</span>
+            </h2>
+            <p>
+                <span class="lang-de">BikeNav_C3 ist ein hochoptimiertes Navigations-Display für Radfahrer. Minimalistisch, schnell und voll integriert. Die Navigation erfolgt über gängige Android-Apps wie OsmAnd, Komoot oder Google Maps, die ihre Anweisungen direkt an das Display senden. Ein entscheidender Vorteil: Bei einem Sturz ist nur das günstige Display am Lenker gefährdet, während dein teures Smartphone sicher in der Tasche bleibt.</span>
+                <span class="lang-en">BikeNav_C3 is a highly optimized navigation display for cyclists. Minimalist, fast, and fully integrated. Navigation is handled via popular Android apps like OsmAnd, Komoot, or Google Maps, which send their instructions directly to the display. A key advantage: In the event of a crash, only the inexpensive display on the handlebars is at risk, while your expensive smartphone remains safe in your pocket.</span>
+            </p>
         </section>
         
         <section>
-            <h2>Hardware</h2>
-            <p>Das Projekt ist für das <strong>ESP32-2424S012</strong> Display-Board optimiert. Dieses Board ist kostengünstig (ca. 12$) auf Plattformen wie AliExpress erhältlich.</p>
+            <h2>
+                <span class="lang-de">Hardware</span>
+                <span class="lang-en">Hardware</span>
+            </h2>
+            <p>
+                <span class="lang-de">Das Projekt ist für das <strong>ESP32-2424S012</strong> Display-Board optimiert. Dieses Board ist kostengünstig (ca. 12$) auf Plattformen wie AliExpress erhältlich.</span>
+                <span class="lang-en">The project is optimized for the <strong>ESP32-2424S012</strong> display board. This board is inexpensive (approx. 12$) and available on platforms like AliExpress.</span>
+            </p>
         </section>
 
         <section>
-            <h2>Installation</h2>
-            <p>Installiere die Firmware direkt über den Browser:</p>
-            <a href="webuploader/index.html" class="btn">Web-Uploader starten</a>
+            <h2>
+                <span class="lang-de">Installation</span>
+                <span class="lang-en">Installation</span>
+            </h2>
+            <p>
+                <span class="lang-de">Installiere die Firmware direkt über den Browser:</span>
+                <span class="lang-en">Install the firmware directly via the browser:</span>
+            </p>
+            <a href="webuploader/index.html" class="btn">
+                <span class="lang-de">Web-Uploader starten</span>
+                <span class="lang-en">Start Web-Uploader</span>
+            </a>
             
-            <p style="margin-top: 25px;">Zusätzlich wird die Android-App für die Kommunikation benötigt:</p>
-            <a href="https://github.com/scriptwriter13/TTS2BluetoothSerial/releases" class="btn" style="background: var(--accent-orange); color: #000;">Android APK Download</a>
+            <p style="margin-top: 25px;">
+                <span class="lang-de">Zusätzlich wird die Android-App für die Kommunikation benötigt:</span>
+                <span class="lang-en">Additionally, the Android app is required for communication:</span>
+            </p>
+            <a href="https://github.com/scriptwriter13/TTS2BluetoothSerial/releases" class="btn" style="background: var(--accent-orange); color: #000;">
+                <span class="lang-de">Android APK Download</span>
+                <span class="lang-en">Android APK Download</span>
+            </a>
+            
+            <div style="margin-top: 20px; font-size: 0.9em; color: var(--text-dim); text-align: left; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                <p><strong>
+                    <span class="lang-de">Wichtige Berechtigungen:</span>
+                    <span class="lang-en">Important permissions:</span>
+                </strong>
+                    <span class="lang-de">Damit die App stabil funktioniert, müssen nach der Installation folgende Rechte erteilt werden:</span>
+                    <span class="lang-en">For the app to work stably, the following permissions must be granted after installation:</span>
+                </p>
+                <ul style="margin-bottom: 0;">
+                    <li><strong>
+                        <span class="lang-de">Bluetooth:</span>
+                        <span class="lang-en">Bluetooth:</span>
+                    </strong>
+                        <span class="lang-de">Erforderlich für die Verbindung zum Display.</span>
+                        <span class="lang-en">Required for connection to the display.</span>
+                    </li>
+                    <li><strong>
+                        <span class="lang-de">Standort:</span>
+                        <span class="lang-en">Location:</span>
+                    </strong>
+                        <span class="lang-de">Wird von Android für den BLE-Scan benötigt.</span>
+                        <span class="lang-en">Required by Android for BLE scanning.</span>
+                    </li>
+                    <li><strong>
+                        <span class="lang-de">Akku-Optimierung:</span>
+                        <span class="lang-en">Battery optimization:</span>
+                    </strong>
+                        <span class="lang-de">Bitte auf "Nicht einschränken" stellen, damit die App im Hintergrund aktiv bleibt.</span>
+                        <span class="lang-en">Please set to "Unrestricted" so the app remains active in the background.</span>
+                    </li>
+                </ul>
+            </div>
         </section>
 
         <section>
-            <h2>Projekt-Links</h2>
-            <p>Besuche das Repository auf GitHub:</p>
-            <a href="https://github.com/scriptwriter13/Navi_Display_ESP32C3/" class="btn">GitHub Repository</a>
+            <h2>
+                <span class="lang-de">Projekt-Links</span>
+                <span class="lang-en">Project links</span>
+            </h2>
+            <p>
+                <span class="lang-de">Besuche das Repository auf GitHub:</span>
+                <span class="lang-en">Visit the repository on GitHub:</span>
+            </p>
+            <a href="https://github.com/scriptwriter13/Navi_Display_ESP32C3/" class="btn">
+                <span class="lang-de">GitHub Repository</span>
+                <span class="lang-en">GitHub Repository</span>
+            </a>
         </section>
         
         <section>
-            <h2>Dokumentation</h2>
-            <p>Technische Details und Protokolle:</p>
-            <a href="BLE_OTA.md" class="btn">BLE OTA Spezifikation</a>
+            <h2>
+                <span class="lang-de">Dokumentation</span>
+                <span class="lang-en">Documentation</span>
+            </h2>
+            <p>
+                <span class="lang-de">Technische Details und Protokolle:</span>
+                <span class="lang-en">Technical details and protocols:</span>
+            </p>
+            <a href="BLE_OTA.md" class="btn">
+                <span class="lang-de">BLE OTA Spezifikation</span>
+                <span class="lang-en">BLE OTA Specification</span>
+            </a>
         </section>
     </main>
 
     <footer>
         <p>&copy; 2026 scriptwriter13 | Lizenziert unter GPLv3</p>
     </footer>
+
+    <script>
+        function setLang(lang) {
+            document.body.className = 'lang-' + lang;
+            localStorage.setItem('lang', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + lang).classList.add('active');
+        }
+        // Initialisierung
+        const savedLang = localStorage.getItem('lang') || 'de';
+        setLang(savedLang);
+    </script>
 </body>
 </html>
