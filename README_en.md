@@ -2,6 +2,8 @@
 
 BikeNav_C3 is a minimalist, Bluetooth-based Head-Up Display (HUD) for bicycles, based on the ESP32-C3 and a 1.28" round display (GC9A01).
 
+For more information, visit the [project homepage](https://scriptwriter13.github.io/Navi_Display_ESP32C3/).
+
 ### What is this device used for?
 The BikeNav_C3 turns your smartphone into a discreet navigation system. Instead of constantly looking at your phone on the handlebars while riding, the HUD delivers precise turn-by-turn instructions directly into your field of view. It is ideal for:
 * **Safe Cycling**: Focus remains on the road, not on the smartphone display.
