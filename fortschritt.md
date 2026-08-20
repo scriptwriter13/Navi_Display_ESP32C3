@@ -94,3 +94,4 @@
 - [ ] Aktualisierung Hardware-Preise in docs/index.html
 - [x] Link zur Dokumentation in docs/index.html auf GitHub-Ordner aktualisiert
 - [x] Link zur Projekthomepage in READMEs aktualisiert
+- [x] Vollständige Bereinigung des alten Projektnamens (Navi_Display_ESP32C3 -> bikenavi_esp32) in docs/index.html und README.md

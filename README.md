@@ -1,6 +1,6 @@
-# BikeNav_C3 - Smart Bike HUD
+# bikenavi_esp32 - Smart Bike HUD
 
-BikeNav_C3 ist ein minimalistisches, Bluetooth-basiertes Head-Up-Display (HUD) für Fahrräder, basierend auf dem ESP32-C3 und einem 1.28" Rund-Display (GC9A01). 
+bikenavi_esp32 ist ein minimalistisches, Bluetooth-basiertes Head-Up-Display (HUD) für Fahrräder, basierend auf dem ESP32-C3 und einem 1.28" Rund-Display (GC9A01). 
 
 Mehr Informationen findest du auf der [Projekthomepage](https://scriptwriter13.github.io/bikenavi_esp32/).
 
