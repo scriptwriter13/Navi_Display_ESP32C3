@@ -93,4 +93,4 @@
 - [ ] Hinweis auf OTA-Updates in docs/index.html hinzugefügt
 - [ ] Aktualisierung Hardware-Preise in docs/index.html
 - [x] Link zur Dokumentation in docs/index.html auf GitHub-Ordner aktualisiert
-- [x] Link zur Projekthomepage in READMEs hinzugefügt
+- [x] Link zur Projekthomepage in READMEs aktualisiert
