@@ -79,6 +79,7 @@
 - [ ] Kopieren der Binaries in docs/webuploader/files/
 - [ ] Hinzufügen von Hardware-Bildern in docs/webuploader/index.html
 - [x] Anpassung Hardware-Bezugsquellen-Text in docs/index.html
+- [x] Hinweis auf WebUploader als einfachste Installationsmethode in READMEs hinzugefügt
 - [ ] Hinweis auf TTS/Notifikations-Funktion in docs/index.html
 - [ ] Hinweis auf Android-App in docs/index.html hinzugefügt
 - [ ] Hinweis auf Android-App-Berechtigungen in docs/index.html hinzugefügt

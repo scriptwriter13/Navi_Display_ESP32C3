@@ -44,6 +44,9 @@ Das Herzstück des Systems ist die Kopplung mit der **Android Bridge App** [TTS2
 
 ## 🚀 Schnellstart & Installation
 
+### Der einfachste Weg: WebUploader
+Die Installation ist am einfachsten direkt über den Browser möglich. Besuche dazu den [WebUploader](https://scriptwriter13.github.io/bikenavi_esp32/webuploader/).
+
 ### Installation via PlatformIO
 1. **Vorbereitung**: Installiere [PlatformIO](https://platformio.org/) (als VS Code Extension).
 2. **Kompilieren & Flashen**:
