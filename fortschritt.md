@@ -80,6 +80,7 @@
 - [ ] Hinzufügen von Hardware-Bildern in docs/webuploader/index.html
 - [x] Anpassung Hardware-Bezugsquellen-Text in docs/index.html
 - [x] Hinweis auf WebUploader als einfachste Installationsmethode in READMEs hinzugefügt
+- [x] Entfernung der Standard-Board-Variante aus docs/webuploader/index.html
 - [ ] Hinweis auf TTS/Notifikations-Funktion in docs/index.html
 - [ ] Hinweis auf Android-App in docs/index.html hinzugefügt
 - [ ] Hinweis auf Android-App-Berechtigungen in docs/index.html hinzugefügt
